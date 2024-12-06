@@ -3,10 +3,14 @@ package Application;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import Logic.Bullet;
+import Logic.GameCurrency;
 import Logic.Zombie;
 import Logic.Plant;
 
@@ -17,6 +21,7 @@ import java.util.Random;
 
 public class GameScreen {
     private Pane root;
+    private Label moneyLabel;
     private List<Bullet> bullets;
     private List<Zombie> zombies;
     private List<Plant> plants;
@@ -33,7 +38,9 @@ public class GameScreen {
         plants = new ArrayList<>();
         plantColumns = new int[NUM_ROWS];
         random = new Random();
+        GameCurrency.setMoney();
         initializeGameScreen();
+        updateMoneyDisplay();
         
     }
 
@@ -44,6 +51,16 @@ public class GameScreen {
         background.setFitWidth(800);
         background.setFitHeight(600);
         root.getChildren().add(background);
+        
+        //Money Label
+        moneyLabel = new Label("Money: " + GameCurrency.getMoney());
+        moneyLabel.setFont(new Font("Arial", 18));
+        moneyLabel.setTextFill(Color.BLACK);
+        moneyLabel.setLayoutX(10);
+        moneyLabel.setLayoutY(10);
+        moneyLabel.setStyle("-fx-background-color: white; -fx-padding: 5;");
+        root.getChildren().add(moneyLabel);
+        
 
         // Plant Buttons
         Button btn1 = createPlantButton("A", 410, 0);
@@ -54,6 +71,7 @@ public class GameScreen {
         
         root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
         
+        //Start Button
         Button btn6 = new Button("Start");
         btn6.setPrefHeight(20);
         btn6.setPrefWidth(55);
@@ -63,6 +81,9 @@ public class GameScreen {
         root.getChildren().add(btn6);
 
         
+    }
+    private void updateMoneyDisplay() {
+        moneyLabel.setText("Money: " + GameCurrency.getMoney());
     }
      
     private void startAction() {
@@ -99,7 +120,7 @@ public class GameScreen {
 
     private void plantAction(int rowIndex) {
         // Check if there's space to plant in this row
-        if (plantColumns[rowIndex] < NUM_COLUMNS) {
+        if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(100)) {
             double x = 160 + plantColumns[rowIndex] * 68;  // Adjust X based on column index
             double y = rowIndex * (600 / NUM_ROWS) + 30;   // Set Y based on row index
 
@@ -110,6 +131,7 @@ public class GameScreen {
 
             // Increment the column index for this row
             plantColumns[rowIndex]++;
+            updateMoneyDisplay();
         }
     }
 

@@ -10,6 +10,7 @@ public class Plant {
     private ImageView shape;
     private long lastShootTime;
     private static final long SHOOT_INTERVAL = 1_000_000_000L; // 1 second in nanoseconds
+    private int PlantCost = 100;
 
     public Plant(double x, double y) {
         this.x = x;
@@ -42,4 +43,9 @@ public class Plant {
         bullets.add(bullet);
         root.getChildren().add(bullet.getShape());
     }
+
+	public int getPlantCost() {
+		return PlantCost;
+	}
+    
 }
