@@ -1,11 +1,13 @@
 package Application;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import Logic.Bullet;
 import Logic.Zombie;
+import Logic.Plant;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,14 +18,19 @@ public class GameScreen {
     private Pane root;
     private List<Bullet> bullets;
     private List<Zombie> zombies;
+    private List<Plant> plants;
     private Random random;
     private static final int NUM_ROWS = 5;
-    private static final int ZOMBIE_SPAWN_INTERVAL = 2000; // Milliseconds between spawns
+    private static final int NUM_COLUMNS = 9;
+    private static final int ZOMBIE_SPAWN_INTERVAL = 2000;
+    private int[] plantColumns;
 
     public GameScreen() {
         root = new Pane();
         bullets = new ArrayList<>();
         zombies = new ArrayList<>();
+        plants = new ArrayList<>();
+        plantColumns = new int[NUM_ROWS];
         random = new Random();
         initializeGameScreen();
         startGameLoop();
@@ -31,42 +38,59 @@ public class GameScreen {
 
     private void initializeGameScreen() {
         // Background
-        Image backgroundImage = new Image(getClass().getResource("/res/Starting.png").toExternalForm());
+        Image backgroundImage = new Image(getClass().getResource("/res/background.png").toExternalForm());
         ImageView background = new ImageView(backgroundImage);
         background.setFitWidth(800);
         background.setFitHeight(600);
         root.getChildren().add(background);
 
-        // Plant
-        Image plantImage = new Image(getClass().getResource("/res/Unknown.jpeg").toExternalForm());
-        ImageView plant = new ImageView(plantImage);
-        plant.setFitWidth(40);
-        plant.setFitHeight(40);
-        plant.setX(100);
-        plant.setY(300);
-        root.getChildren().add(plant);
+        // Plant Buttons
+        Button btn1 = createPlantButton("A", 410, 0);
+        Button btn2 = createPlantButton("B", 440, 1);
+        Button btn3 = createPlantButton("C", 470, 2);
+        Button btn4 = createPlantButton("D", 500, 3);
+        Button btn5 = createPlantButton("E", 530, 4);
 
-        // Spawn first zombies (optional)
+        root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
+
         spawnZombie();
     }
 
-    private void spawnZombie() {
-        // Randomly select a row (from 0 to 4) and spawn the zombie at a random x-coordinate
-        int row = random.nextInt(NUM_ROWS);
-        double spawnY;
-        
-        if (row <= 2) {
-        	spawnY = ( row * (600 / NUM_ROWS) ) + 50;
-        } else {
-        	spawnY = ( row * (600 / NUM_ROWS) ) + 30;
+    private Button createPlantButton(String label, double layoutY, int rowIndex) {
+        Button button = new Button(label);
+        button.setPrefWidth(55);
+        button.setPrefHeight(20);
+        button.setLayoutX(20);
+        button.setLayoutY(layoutY);
+        button.setOnAction(event -> plantAction(rowIndex));
+        return button;
+    }
+
+    private void plantAction(int rowIndex) {
+        // Check if there's space to plant in this row
+        if (plantColumns[rowIndex] < NUM_COLUMNS) {
+            double x = 160 + plantColumns[rowIndex] * 68;  // Adjust X based on column index
+            double y = rowIndex * (600 / NUM_ROWS) + 30;   // Set Y based on row index
+
+            // Create a new plant
+            Plant plant = new Plant(x, y);
+            plants.add(plant);
+            root.getChildren().add(plant.getShape());
+
+            // Increment the column index for this row
+            plantColumns[rowIndex]++;
         }
-        
+    }
+
+    private void spawnZombie() {
+        int row = random.nextInt(NUM_ROWS);
+        double spawnY = (row * (600 / NUM_ROWS)) + 30;
         double spawnX = 800;  // Spawn from the right side of the screen
 
         Zombie zombie = new Zombie(spawnX, spawnY, 1); // Speed 1 for example
         zombies.add(zombie);
 
-        Image zombieImage = new Image(getClass().getResource("/res/ad.jpeg").toExternalForm());
+        Image zombieImage = new Image(getClass().getResource("/res/zombie.png").toExternalForm());
         ImageView zombieShape = new ImageView(zombieImage);
         zombieShape.setFitWidth(40);
         zombieShape.setFitHeight(60);
@@ -118,6 +142,11 @@ public class GameScreen {
                 // Update Zombies
                 for (Zombie zombie : zombies) {
                     zombie.update();
+                }
+
+                // Update Plants and shoot bullets
+                for (Plant plant : plants) {
+                    plant.update(bullets, root);  // Plants shoot bullets when updated
                 }
 
                 // Check collisions

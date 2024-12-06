@@ -1,15 +1,33 @@
 package Logic;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Zombie extends GameObject {
+public class Zombie {
+    private double x, y;
     private double speed;
-    private int health; // จำนวนครั้งที่โดนโจมตีก่อนตาย
+    private int health;
+    private ImageView shape;
 
     public Zombie(double x, double y, double speed) {
-        super(x, y);
+        this.x = x;
+        this.y = y;
         this.speed = speed;
-        this.health = 5; // ต้องโดนกระสุน 5 ครั้งจึงตาย
+        this.health = 3; // Example health value
+
+        // Zombie image (customize accordingly)
+        Image zombieImage = new Image(getClass().getResource("/res/zombie.png").toExternalForm());
+        shape = new ImageView(zombieImage);
+        shape.setFitWidth(40);
+        shape.setFitHeight(60);
+        shape.setX(x);
+        shape.setY(y);
+    }
+
+    public void update() {
+        // Move the zombie to the left
+        x -= speed;
+        shape.setX(x);
     }
 
     public void takeDamage() {
@@ -20,8 +38,19 @@ public class Zombie extends GameObject {
         return health <= 0;
     }
 
-    @Override
-    public void update() {
-        setX(getX() - speed); // เลื่อนตำแหน่งในแนวนอน
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public ImageView getShape() {
+        return shape;
+    }
+
+    public void setShape(ImageView shape) {
+        this.shape = shape;
     }
 }
