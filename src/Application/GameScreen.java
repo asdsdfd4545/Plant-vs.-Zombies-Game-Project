@@ -1,6 +1,7 @@
 package Application;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,7 +34,7 @@ public class GameScreen {
         plantColumns = new int[NUM_ROWS];
         random = new Random();
         initializeGameScreen();
-        startGameLoop();
+        
     }
 
     private void initializeGameScreen() {
@@ -50,21 +51,51 @@ public class GameScreen {
         Button btn3 = createPlantButton("C", 470, 2);
         Button btn4 = createPlantButton("D", 500, 3);
         Button btn5 = createPlantButton("E", 530, 4);
-
+        
         root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
+        
+        Button btn6 = new Button("Start");
+        btn6.setPrefHeight(20);
+        btn6.setPrefWidth(55);
+        btn6.setLayoutX(20);
+        btn6.setLayoutY(350);
+        btn6.setOnAction(event->startAction());
+        root.getChildren().add(btn6);
 
+        
+    }
+     
+    private void startAction() {
+        // วนลูปผ่าน children ทั้งหมดของ root
+        for (Node node : root.getChildren()) {
+            // ตรวจสอบว่า node เป็น Button หรือไม่
+            if (node instanceof Button) {
+                Button button = (Button) node;
+
+                // สมมติว่าคุณมีการตรวจสอบว่าเป็น Plant Button (อาจใช้ id หรือ text)
+                if ("Plant".equals(button.getId())) { // หรือใช้ button.getText()
+                    button.setVisible(false);
+                }
+            }
+        }
         spawnZombie();
+        startGameLoop();
+        
     }
 
+    
     private Button createPlantButton(String label, double layoutY, int rowIndex) {
         Button button = new Button(label);
+        button.setId("Plant");
         button.setPrefWidth(55);
         button.setPrefHeight(20);
         button.setLayoutX(20);
         button.setLayoutY(layoutY);
         button.setOnAction(event -> plantAction(rowIndex));
+        button.setVisible(true);
         return button;
     }
+    
 
     private void plantAction(int rowIndex) {
         // Check if there's space to plant in this row
@@ -138,6 +169,7 @@ public class GameScreen {
                         bulletIterator.remove();
                     }
                 }
+                
 
                 // Update Zombies
                 for (Zombie zombie : zombies) {
