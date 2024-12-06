@@ -173,7 +173,44 @@ public class GameScreen {
                 }
             }
         }
+
+        // Check collision between zombies and plants
+        Iterator<Zombie> zombieIterator = zombies.iterator();
+        while (zombieIterator.hasNext()) {
+            Zombie zombie = zombieIterator.next();
+            Iterator<Plant> plantIterator = plants.iterator();
+            while (plantIterator.hasNext()) {
+                Plant plant = plantIterator.next();
+                if (zombie.getShape().getBoundsInParent().intersects(plant.getShape().getBoundsInParent())) {
+                    // Zombie sacrifices itself to kill the plant
+                    root.getChildren().remove(zombie.getShape()); // Remove zombie
+                    root.getChildren().remove(plant.getShape()); // Remove plant
+                    zombieIterator.remove();
+                    plantIterator.remove();
+                    break; // Exit loop once a zombie collides with a plant
+                }
+            }
+        }
     }
+    
+    private void switchToGameOverScreen() {
+        // Clear current game objects (optional, but ensures the game stops)
+        root.getChildren().clear();
+
+        // Create a Game Over Label
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.setFont(new Font("Arial", 48));
+        gameOverLabel.setTextFill(Color.RED);
+        gameOverLabel.setLayoutX(260); // Center the text horizontally (adjust as needed)
+        gameOverLabel.setLayoutY(260); // Center the text vertically (adjust as needed)
+
+        // Set background to black
+        root.setStyle("-fx-background-color: black;");
+
+        // Add the label to the root pane
+        root.getChildren().add(gameOverLabel);
+    }
+
 
     private void startGameLoop() {
         AnimationTimer gameLoop = new AnimationTimer() {
@@ -191,11 +228,17 @@ public class GameScreen {
                         bulletIterator.remove();
                     }
                 }
-                
 
                 // Update Zombies
                 for (Zombie zombie : zombies) {
                     zombie.update();
+
+                    // Check if zombie reaches the left side of the screen
+                    if (zombie.getX() < 100) {
+                        switchToGameOverScreen();
+                        stop();  // Stop the game loop
+                        return;  // Exit the game loop
+                    }
                 }
 
                 // Update Plants and shoot bullets
@@ -216,6 +259,7 @@ public class GameScreen {
 
         gameLoop.start();
     }
+
 
     public Pane getRoot() {
         return root;
