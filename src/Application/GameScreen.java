@@ -10,29 +10,34 @@ import Logic.Zombie;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 public class GameScreen {
     private Pane root;
     private List<Bullet> bullets;
     private List<Zombie> zombies;
+    private Random random;
+    private static final int NUM_ROWS = 5;
+    private static final int ZOMBIE_SPAWN_INTERVAL = 2000; // Milliseconds between spawns
 
     public GameScreen() {
         root = new Pane();
         bullets = new ArrayList<>();
         zombies = new ArrayList<>();
+        random = new Random();
         initializeGameScreen();
         startGameLoop();
     }
 
     private void initializeGameScreen() {
-        // พื้นหลัง
+        // Background
         Image backgroundImage = new Image(getClass().getResource("/res/Starting.png").toExternalForm());
         ImageView background = new ImageView(backgroundImage);
         background.setFitWidth(800);
         background.setFitHeight(600);
         root.getChildren().add(background);
 
-        // สร้าง Plant
+        // Plant
         Image plantImage = new Image(getClass().getResource("/res/Unknown.jpeg").toExternalForm());
         ImageView plant = new ImageView(plantImage);
         plant.setFitWidth(40);
@@ -41,12 +46,24 @@ public class GameScreen {
         plant.setY(300);
         root.getChildren().add(plant);
 
-        // เพิ่ม Zombie
-        spawnZombie(700, 300);
+        // Spawn first zombies (optional)
+        spawnZombie();
     }
 
-    private void spawnZombie(double x, double y) {
-        Zombie zombie = new Zombie(x, y, 1);
+    private void spawnZombie() {
+        // Randomly select a row (from 0 to 4) and spawn the zombie at a random x-coordinate
+        int row = random.nextInt(NUM_ROWS);
+        double spawnY;
+        
+        if (row <= 2) {
+        	spawnY = ( row * (600 / NUM_ROWS) ) + 50;
+        } else {
+        	spawnY = ( row * (600 / NUM_ROWS) ) + 30;
+        }
+        
+        double spawnX = 800;  // Spawn from the right side of the screen
+
+        Zombie zombie = new Zombie(spawnX, spawnY, 1); // Speed 1 for example
         zombies.add(zombie);
 
         Image zombieImage = new Image(getClass().getResource("/res/ad.jpeg").toExternalForm());
@@ -59,20 +76,6 @@ public class GameScreen {
         root.getChildren().add(zombieShape);
     }
 
-    private void shootBullet(double x, double y) {
-        Bullet bullet = new Bullet(x, y, 5);
-        bullets.add(bullet);
-
-        Image bulletImage = new Image(getClass().getResource("/res/been.jpg").toExternalForm());
-        ImageView bulletShape = new ImageView(bulletImage);
-        bulletShape.setFitWidth(10);
-        bulletShape.setFitHeight(10);
-        bulletShape.setX(bullet.getX());
-        bulletShape.setY(bullet.getY());
-        bullet.setShape(bulletShape);
-        root.getChildren().add(bulletShape);
-    }
-
     private void checkCollisions() {
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
@@ -81,13 +84,13 @@ public class GameScreen {
             while (zombieIterator.hasNext()) {
                 Zombie zombie = zombieIterator.next();
                 if (bullet.getShape().getBoundsInParent().intersects(zombie.getShape().getBoundsInParent())) {
-                    zombie.takeDamage(); // ลดค่า health ของซอมบี้
-                    root.getChildren().remove(bullet.getShape()); // ลบกระสุน
+                    zombie.takeDamage(); // Decrease zombie's health
+                    root.getChildren().remove(bullet.getShape()); // Remove the bullet
                     bulletIterator.remove();
                     if (zombie.isDead()) {
-                        root.getChildren().remove(zombie.getShape()); // ลบซอมบี้ที่ตาย
+                        root.getChildren().remove(zombie.getShape()); // Remove the zombie if it's dead
                         zombieIterator.remove();
-                        spawnZombie(700, 300); // สร้างซอมบี้ใหม่
+                        spawnZombie(); // Spawn a new zombie
                     }
                     break;
                 }
@@ -97,9 +100,11 @@ public class GameScreen {
 
     private void startGameLoop() {
         AnimationTimer gameLoop = new AnimationTimer() {
+            private long lastZombieSpawnTime = 0;
+
             @Override
             public void handle(long now) {
-                // อัปเดตกระสุน
+                // Update bullets
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
                     Bullet bullet = bulletIterator.next();
@@ -110,17 +115,18 @@ public class GameScreen {
                     }
                 }
 
-                // อัปเดต Zombie
+                // Update Zombies
                 for (Zombie zombie : zombies) {
                     zombie.update();
                 }
 
-                // ตรวจสอบการชน
+                // Check collisions
                 checkCollisions();
 
-                // ยิงกระสุนทุกๆ 1 วินาที
-                if (now % 60 == 0) {
-                    shootBullet(120, 300); // ยิงจากตำแหน่ง Plant
+                // Spawn a new zombie at regular intervals (e.g., every 2 seconds)
+                if (now - lastZombieSpawnTime > ZOMBIE_SPAWN_INTERVAL * 1000000L) {
+                    spawnZombie();
+                    lastZombieSpawnTime = now;
                 }
             }
         };
