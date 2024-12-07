@@ -36,7 +36,7 @@ public class GameScreen {
     private static final int ZOMBIE_SPAWN_INTERVAL = 2000;
     private int[] plantColumns;
     private boolean gameStarted;
-    private int currentRowIndex;
+    private int currentRowIndex = -1;
     private int LastButtonPush = -1;
     private Rectangle currentHighlight;
     private double X,Y;
@@ -185,6 +185,7 @@ public class GameScreen {
     }
 
     private void plantAction(int rowIndex, String plantType) {
+    	if (currentRowIndex == -1) return;
     	if(rowIndex != LastButtonPush) plantColumns[rowIndex] = 0;
     	LastButtonPush = rowIndex;
     	int spendingcost = 0;
