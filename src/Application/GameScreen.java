@@ -6,7 +6,7 @@ import Plants.SuperPlant;
 import Plants.TrapPlant;
 import Logic.Bullet;
 import Logic.GameCurrency;
-import Logic.Zombie;
+import zombies.Zombie;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Node;

@@ -1,4 +1,4 @@
-package Logic;
+package zombies;
 
 import java.util.HashMap;
 import java.util.Map;
