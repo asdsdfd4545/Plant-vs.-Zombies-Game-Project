@@ -1,5 +1,12 @@
 package Application;
 
+import Plants.BasePlant;
+import Plants.Plant;
+import Plants.SuperPlant;
+import Plants.TrapPlant;
+import Logic.Bullet;
+import Logic.GameCurrency;
+import Logic.Zombie;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -9,10 +16,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import Logic.Bullet;
-import Logic.GameCurrency;
-import Logic.Zombie;
-import Logic.Plant;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,18 +33,21 @@ public class GameScreen {
     private static final int NUM_COLUMNS = 9;
     private static final int ZOMBIE_SPAWN_INTERVAL = 2000;
     private int[] plantColumns;
+    private boolean gameStarted;
 
     public GameScreen() {
         root = new Pane();
+        
         bullets = new ArrayList<>();
         zombies = new ArrayList<>();
         plants = new ArrayList<>();
+        
         plantColumns = new int[NUM_ROWS];
         random = new Random();
+        gameStarted = false;
         GameCurrency.setMoney();
         initializeGameScreen();
         updateMoneyDisplay();
-        
     }
 
     private void initializeGameScreen() {
@@ -57,79 +63,117 @@ public class GameScreen {
         moneyLabel.setFont(new Font("Arial", 18));
         moneyLabel.setTextFill(Color.BLACK);
         moneyLabel.setLayoutX(10);
-        moneyLabel.setLayoutY(10);
+        moneyLabel.setLayoutY(5);
         moneyLabel.setStyle("-fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(moneyLabel);
-        
 
-        // Plant Buttons
-        Button btn1 = createPlantButton("A", 410, 0);
-        Button btn2 = createPlantButton("B", 440, 1);
-        Button btn3 = createPlantButton("C", 470, 2);
-        Button btn4 = createPlantButton("D", 500, 3);
-        Button btn5 = createPlantButton("E", 530, 4);
+        // Plant Buttons for each row (BasePlant, SuperPlant, TrapPlant)
+        for (int rowIndex = 0; rowIndex < NUM_ROWS; rowIndex++) {
+            createPlantRowButtons(rowIndex);
+        }
         
-        root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
-        
-        //Start Button
-        Button btn6 = new Button("Start");
-        btn6.setPrefHeight(20);
-        btn6.setPrefWidth(55);
-        btn6.setLayoutX(20);
-        btn6.setLayoutY(350);
-        btn6.setOnAction(event->startAction());
-        root.getChildren().add(btn6);
-
-        
+        // Start Button
+        Button startButton = new Button("Start");
+        startButton.setPrefHeight(30);
+        startButton.setPrefWidth(75);
+        startButton.setLayoutX(700);
+        startButton.setLayoutY(15);
+        startButton.setOnAction(event -> startAction());
+        root.getChildren().add(startButton);
     }
+
     private void updateMoneyDisplay() {
         moneyLabel.setText("Money: " + GameCurrency.getMoney());
     }
-     
-    private void startAction() {
-        // วนลูปผ่าน children ทั้งหมดของ root
-        for (Node node : root.getChildren()) {
-            // ตรวจสอบว่า node เป็น Button หรือไม่
-            if (node instanceof Button) {
-                Button button = (Button) node;
 
-                // สมมติว่าคุณมีการตรวจสอบว่าเป็น Plant Button (อาจใช้ id หรือ text)
-                if ("Plant".equals(button.getId())) { // หรือใช้ button.getText()
-                    button.setVisible(false);
+    private void startAction() {
+        if (!gameStarted) {
+            // Hide all plant purchase buttons
+            for (Node node : root.getChildren()) {
+                if (node instanceof Button) {
+                    Button button = (Button) node;
+                    if ("Plant".equals(button.getId())) {
+                        button.setVisible(false);
+                    }
                 }
             }
+            spawnZombie();
+            startGameLoop();
+            gameStarted = true;
         }
-        spawnZombie();
-        startGameLoop();
-        
     }
 
-    
-    private Button createPlantButton(String label, double layoutY, int rowIndex) {
-        Button button = new Button(label);
-        button.setId("Plant");
-        button.setPrefWidth(55);
-        button.setPrefHeight(20);
-        button.setLayoutX(20);
-        button.setLayoutY(layoutY);
-        button.setOnAction(event -> plantAction(rowIndex));
-        button.setVisible(true);
-        return button;
+    private void createPlantRowButtons(int rowIndex) {
+        double yPosition = 40 + rowIndex * 110;  // Y position for each row's buttons
+
+        // Create Button for BasePlant
+        Button basePlantButton = new Button("BasePlant");
+        basePlantButton.setId("Plant");
+        basePlantButton.setPrefWidth(55);
+        basePlantButton.setPrefHeight(15);
+        basePlantButton.setLayoutX(20);
+        basePlantButton.setLayoutY(yPosition);
+        basePlantButton.setOnAction(event -> plantAction(rowIndex, "BasePlant"));
+        root.getChildren().add(basePlantButton);
+
+        // Create Button for SuperPlant
+        Button superPlantButton = new Button("SuperPlant");
+        superPlantButton.setId("Plant");
+        superPlantButton.setPrefWidth(55);
+        superPlantButton.setPrefHeight(15);
+        superPlantButton.setLayoutX(20);
+        superPlantButton.setLayoutY(yPosition + 30);
+        superPlantButton.setOnAction(event -> plantAction(rowIndex, "SuperPlant"));
+        root.getChildren().add(superPlantButton);
+
+        // Create Button for TrapPlant
+        Button trapPlantButton = new Button("TrapPlant");
+        trapPlantButton.setId("Plant");
+        trapPlantButton.setPrefWidth(55);
+        trapPlantButton.setPrefHeight(15);
+        trapPlantButton.setLayoutX(20);
+        trapPlantButton.setLayoutY(yPosition + 60);
+        trapPlantButton.setOnAction(event -> plantAction(rowIndex, "TrapPlant"));
+        root.getChildren().add(trapPlantButton);
     }
-    
 
-    private void plantAction(int rowIndex) {
-        // Check if there's space to plant in this row
-        if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(100)) {
-            double x = 160 + plantColumns[rowIndex] * 68;  // Adjust X based on column index
-            double y = rowIndex * (600 / NUM_ROWS) + 30;   // Set Y based on row index
+    private void plantAction(int rowIndex, String plantType) {
+        int spendingcost = 0;
+        switch (plantType) {
+            case "BasePlant":
+                spendingcost = 50;
+                break; // Prevent fall-through
+            case "SuperPlant":
+                spendingcost = 100;
+                break; // Prevent fall-through
+            case "TrapPlant":
+                spendingcost = 20;
+                break; // Prevent fall-through
+        }
 
-            // Create a new plant
-            Plant plant = new Plant(x, y);
-            plants.add(plant);
-            root.getChildren().add(plant.getShape());
+        if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
+            double x = 160 + plantColumns[rowIndex] * 68;
+            double y = rowIndex * (600 / NUM_ROWS) + 30;
 
-            // Increment the column index for this row
+            // Create and add the appropriate plant type
+            Plant plant = null;
+            switch (plantType) {
+                case "BasePlant":
+                    plant = new BasePlant(x, y);
+                    break;
+                case "SuperPlant":
+                    plant = new SuperPlant(x, y);
+                    break;
+                case "TrapPlant":
+                    plant = new TrapPlant(x, y);
+                    break;
+            }
+
+            if (plant != null) {
+                plants.add(plant);
+                root.getChildren().add(plant.getShape());
+            }
+
             plantColumns[rowIndex]++;
             updateMoneyDisplay();
         }
@@ -154,6 +198,7 @@ public class GameScreen {
     }
 
     private void checkCollisions() {
+        // Check bullet collisions
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
             Bullet bullet = bulletIterator.next();
@@ -161,11 +206,11 @@ public class GameScreen {
             while (zombieIterator.hasNext()) {
                 Zombie zombie = zombieIterator.next();
                 if (bullet.getShape().getBoundsInParent().intersects(zombie.getShape().getBoundsInParent())) {
-                    zombie.takeDamage(); // Decrease zombie's health
-                    root.getChildren().remove(bullet.getShape()); // Remove the bullet
+                    zombie.takeDamage();
+                    root.getChildren().remove(bullet.getShape());
                     bulletIterator.remove();
                     if (zombie.isDead()) {
-                        root.getChildren().remove(zombie.getShape()); // Remove the zombie if it's dead
+                        root.getChildren().remove(zombie.getShape());
                         zombieIterator.remove();
                         spawnZombie(); // Spawn a new zombie
                     }
@@ -174,7 +219,7 @@ public class GameScreen {
             }
         }
 
-        // Check collision between zombies and plants
+        // Check plant collisions
         Iterator<Zombie> zombieIterator = zombies.iterator();
         while (zombieIterator.hasNext()) {
             Zombie zombie = zombieIterator.next();
@@ -183,34 +228,28 @@ public class GameScreen {
                 Plant plant = plantIterator.next();
                 if (zombie.getShape().getBoundsInParent().intersects(plant.getShape().getBoundsInParent())) {
                     // Zombie sacrifices itself to kill the plant
-                    root.getChildren().remove(zombie.getShape()); // Remove zombie
-                    root.getChildren().remove(plant.getShape()); // Remove plant
+                    root.getChildren().remove(zombie.getShape());
+                    root.getChildren().remove(plant.getShape());
                     zombieIterator.remove();
                     plantIterator.remove();
-                    break; // Exit loop once a zombie collides with a plant
+                    break;
                 }
             }
         }
     }
-    
+
     private void switchToGameOverScreen() {
-        // Clear current game objects (optional, but ensures the game stops)
         root.getChildren().clear();
 
-        // Create a Game Over Label
         Label gameOverLabel = new Label("Game Over");
         gameOverLabel.setFont(new Font("Arial", 48));
         gameOverLabel.setTextFill(Color.RED);
-        gameOverLabel.setLayoutX(260); // Center the text horizontally (adjust as needed)
-        gameOverLabel.setLayoutY(260); // Center the text vertically (adjust as needed)
+        gameOverLabel.setLayoutX(260);
+        gameOverLabel.setLayoutY(260);
 
-        // Set background to black
         root.setStyle("-fx-background-color: black;");
-
-        // Add the label to the root pane
         root.getChildren().add(gameOverLabel);
     }
-
 
     private void startGameLoop() {
         AnimationTimer gameLoop = new AnimationTimer() {
@@ -222,10 +261,10 @@ public class GameScreen {
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
                     Bullet bullet = bulletIterator.next();
-                    bullet.update();
-                    if (bullet.getX() > 800) {
-                        root.getChildren().remove(bullet.getShape());
-                        bulletIterator.remove();
+                    bullet.update();  // Move the bullet
+                    if (bullet.getX() > 800) {  // Check if the bullet is off-screen
+                        root.getChildren().remove(bullet.getShape());  // Remove bullet
+                        bulletIterator.remove();  // Remove from list
                     }
                 }
 

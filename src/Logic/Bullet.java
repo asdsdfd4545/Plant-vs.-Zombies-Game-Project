@@ -5,33 +5,37 @@ import javafx.scene.image.ImageView;
 
 public class Bullet {
     private double x, y;
+    private int damage;
     private ImageView shape;
-    private double speed;
 
-    public Bullet(double x, double y, double speed) {
+    public Bullet(double x, double y, int damage) {
         this.x = x;
         this.y = y;
-        this.speed = speed;
+        this.damage = damage;
 
-        // Bullet image (use a placeholder or create your own)
+        // Assuming you have a bullet image
         Image bulletImage = new Image(getClass().getResource("/res/bullet.png").toExternalForm());
         shape = new ImageView(bulletImage);
-        shape.setFitWidth(10);
-        shape.setFitHeight(10);
+        shape.setFitWidth(10);  // Set the bullet width
+        shape.setFitHeight(20); // Set the bullet height
         shape.setX(x);
         shape.setY(y);
     }
 
-    public ImageView getShape() {
-        return shape;
+    public void update() {
+        x += 5;  // Move the bullet to the right (you can adjust the speed)
+        shape.setX(x);
     }
 
     public double getX() {
         return x;
     }
 
-    public void update() {
-        x += speed; // Move bullet to the right
-        shape.setX(x);
+    public double getY() {
+        return y;
+    }
+
+    public ImageView getShape() {
+        return shape;
     }
 }
