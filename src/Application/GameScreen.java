@@ -185,7 +185,9 @@ public class GameScreen {
     }
 
     private void plantAction(int rowIndex, String plantType) {
-    		int spendingcost = 0;
+    	if(rowIndex != LastButtonPush) plantColumns[rowIndex] = 0;
+    	LastButtonPush = rowIndex;
+    	int spendingcost = 0;
             switch (plantType) {
             	case "Empty":
             		spendingcost = 0;
