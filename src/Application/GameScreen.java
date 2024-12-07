@@ -37,7 +37,9 @@ public class GameScreen {
     private int[] plantColumns;
     private boolean gameStarted;
     private int currentRowIndex;
+    private int LastButtonPush = -1;
     private Rectangle currentHighlight;
+    private double X,Y;
 
     public GameScreen() {
         root = new Pane();
@@ -134,10 +136,7 @@ public class GameScreen {
     private void selectAction(int rowIndex) {
 		// TODO Auto-generated method stub
     	currentRowIndex = rowIndex;
-    	plantAction(rowIndex, "Empty");
-    	//กด1ครั้งขยับ collumb return collumb
-    	//แสดง วงสีแดงว่าเลือก
-    	//เปลี่ยนplantbutให้รับค่าจากreturnนี้
+        plantAction(rowIndex, "Empty");
 		
 	}
 
@@ -186,67 +185,75 @@ public class GameScreen {
     }
 
     private void plantAction(int rowIndex, String plantType) {
-        int spendingcost = 0;
-        switch (plantType) {
-        	case "Empty":
-        		spendingcost = 0;
-        	break; // Prevent fall-through
-        	
-            case "BasePlant":
-                spendingcost = 50;
-                break; // Prevent fall-through
-            case "SuperPlant":
-                spendingcost = 100;
-                break; // Prevent fall-through
-            case "TrapPlant":
-                spendingcost = 20;
-                break; // Prevent fall-through
-        }
-
-        if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
-            double x = 160 + plantColumns[rowIndex] * 68;
-            double y = rowIndex * (600 / NUM_ROWS) + 30;
-            if (currentHighlight != null) {
-                root.getChildren().remove(currentHighlight);
-            }
-            Rectangle highlight = new Rectangle();
-            highlight.setX(x);
-            highlight.setY(y);
-            highlight.setWidth(68); // ความกว้างของ column
-            highlight.setHeight(600 / NUM_ROWS); // ความสูงของ row
-            highlight.setFill(Color.TRANSPARENT); // สีโปร่งใส
-            highlight.setStroke(Color.RED); // เส้นสีแดง
-            highlight.setStrokeWidth(2); // ความหนาของเส้น
-            root.getChildren().add(highlight);
-            
-
-            // เก็บ Highlight ปัจจุบัน
-            currentHighlight = highlight;
-
-            // Create and add the appropriate plant type
-            Plant plant = null;
+    		int spendingcost = 0;
             switch (plantType) {
+            	case "Empty":
+            		spendingcost = 0;
+            		break; // Prevent fall-through
                 case "BasePlant":
-                    plant = new BasePlant(x, y);
-                    break;
+                    spendingcost = 50;
+                    break; // Prevent fall-through
                 case "SuperPlant":
-                    plant = new SuperPlant(x, y);
-                    break;
+                    spendingcost = 100;
+                    break; // Prevent fall-through
                 case "TrapPlant":
-                    plant = new TrapPlant(x, y);
-                    break;
+                    spendingcost = 20;
+                    break; // Prevent fall-through
             }
+            
+            if (plantColumns[rowIndex] >= NUM_COLUMNS) plantColumns[rowIndex] = 0;
 
-            if (plant != null) {
-                plants.add(plant);
-                root.getChildren().add(plant.getShape());
+            if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
+            	// Create and add the appropriate plant type
+            	if (currentHighlight != null) {
+                    root.getChildren().remove(currentHighlight);
+                }  
+            	
+            	Plant plant = null;
+                switch (plantType) {
+                    case "BasePlant":
+                        plant = new BasePlant(X, Y);
+                        break;
+                    case "SuperPlant":
+                        plant = new SuperPlant(X, Y);
+                        break;
+                    case "TrapPlant":
+                        plant = new TrapPlant(X, Y);
+                        break;
+                }
+
+                if (plant != null) {
+                    plants.add(plant);
+                    root.getChildren().add(plant.getShape());
+                }
+            	
+            	
+            	X = 160 + plantColumns[rowIndex] * 68;
+                Y = rowIndex * (600 / NUM_ROWS) + 30;
+     
+                
+                Rectangle highlight = new Rectangle();
+                highlight.setX(X);
+                highlight.setY(Y);
+                highlight.setWidth(68); // ความกว้างของ column
+                highlight.setHeight(600 / NUM_ROWS); // ความสูงของ row
+                highlight.setFill(Color.TRANSPARENT); // สีโปร่งใส
+                highlight.setStroke(Color.RED); // เส้นสีแดง
+                highlight.setStrokeWidth(2); // ความหนาของเส้น
+                root.getChildren().add(highlight);
+                
+
+                // เก็บ Highlight ปัจจุบัน
+                currentHighlight = highlight;
+
+                plantColumns[rowIndex]++;
+                updateMoneyDisplay();
+ 
             }
-
-            plantColumns[rowIndex]++;
-            updateMoneyDisplay();
-        }
-        
     }
+ 
+        
+    
 
     private void spawnZombie() {
         int row = random.nextInt(NUM_ROWS);
