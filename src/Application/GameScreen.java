@@ -65,11 +65,11 @@ public class GameScreen {
         root.getChildren().add(background);
         
         //Money Label
-        moneyLabel = new Label("Money: " + GameCurrency.getMoney());
-        moneyLabel.setFont(new Font("Arial", 18));
+        moneyLabel = new Label("Money : " + GameCurrency.getMoney());
+        moneyLabel.setFont(new Font("Arial", 13));
         moneyLabel.setTextFill(Color.BLACK);
-        moneyLabel.setLayoutX(10);
-        moneyLabel.setLayoutY(5);
+        moneyLabel.setLayoutX(2);
+        moneyLabel.setLayoutY(20);
         moneyLabel.setStyle("-fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(moneyLabel);
 
@@ -90,14 +90,14 @@ public class GameScreen {
         Button startButton = new Button("Start");
         startButton.setPrefHeight(30);
         startButton.setPrefWidth(75);
-        startButton.setLayoutX(700);
-        startButton.setLayoutY(15);
+        startButton.setLayoutX(10);
+        startButton.setLayoutY(100);
         startButton.setOnAction(event -> startAction());
         root.getChildren().add(startButton);
     }
 
     private void updateMoneyDisplay() {
-        moneyLabel.setText("Money: " + GameCurrency.getMoney());
+        moneyLabel.setText("Money : " + GameCurrency.getMoney());
     }
 
     private void startAction() {
@@ -106,7 +106,7 @@ public class GameScreen {
             for (Node node : root.getChildren()) {
                 if (node instanceof Button) {
                     Button button = (Button) node;
-                    if ("Plant".equals(button.getId())) {
+                    if ("Plant".equals(button.getId()) || "select".equals(button.getId())) {
                         button.setVisible(false);
                     }
                 }
@@ -122,9 +122,9 @@ public class GameScreen {
     private Button createSelectRowButtons(String label, double layoutY, int rowIndex) {
         Button button = new Button(label);
         button.setId("select");
-        button.setPrefWidth(55);
+        button.setPrefWidth(75);
         button.setPrefHeight(20);
-        button.setLayoutX(20);
+        button.setLayoutX(10);
         button.setLayoutY(layoutY);
         button.setOnAction(event -> selectAction(rowIndex));
         button.setVisible(true);
@@ -141,14 +141,14 @@ public class GameScreen {
 	}
 
 	private void createPlantRowButtons(int rowIndex) {
-        double yPosition = 40 + rowIndex * 110;  // Y position for each row's buttons
+        double yPosition = 100 + rowIndex * 110;  // Y position for each row's buttons
 
         // Create Button for BasePlant
         Button basePlantButton = new Button("BasePlant");
         basePlantButton.setId("Plant");
-        basePlantButton.setPrefWidth(55);
+        basePlantButton.setPrefWidth(75);
         basePlantButton.setPrefHeight(15);
-        basePlantButton.setLayoutX(20);
+        basePlantButton.setLayoutX(10);
         basePlantButton.setLayoutY(yPosition);
         basePlantButton.setOnAction(event -> plantAction(currentRowIndex, "BasePlant"));
         root.getChildren().add(basePlantButton);
@@ -156,9 +156,9 @@ public class GameScreen {
         // Create Button for SuperPlant
         Button superPlantButton = new Button("SuperPlant");
         superPlantButton.setId("Plant");
-        superPlantButton.setPrefWidth(55);
+        superPlantButton.setPrefWidth(75);
         superPlantButton.setPrefHeight(15);
-        superPlantButton.setLayoutX(20);
+        superPlantButton.setLayoutX(10);
         superPlantButton.setLayoutY(yPosition + 30);
         superPlantButton.setOnAction(event -> plantAction(currentRowIndex, "SuperPlant"));
         root.getChildren().add(superPlantButton);
@@ -166,18 +166,18 @@ public class GameScreen {
         // Create Button for TrapPlant
         Button trapPlantButton = new Button("TrapPlant");
         trapPlantButton.setId("Plant");
-        trapPlantButton.setPrefWidth(55);
+        trapPlantButton.setPrefWidth(75);
         trapPlantButton.setPrefHeight(15);
-        trapPlantButton.setLayoutX(20);
+        trapPlantButton.setLayoutX(10);
         trapPlantButton.setLayoutY(yPosition + 60);
         trapPlantButton.setOnAction(event -> plantAction(currentRowIndex, "TrapPlant"));
         root.getChildren().add(trapPlantButton);
         
         Button emptyPlantButton = new Button("Empty");
         emptyPlantButton.setId("Plant");
-        emptyPlantButton.setPrefWidth(55);
+        emptyPlantButton.setPrefWidth(75);
         emptyPlantButton.setPrefHeight(15);
-        emptyPlantButton.setLayoutX(20);
+        emptyPlantButton.setLayoutX(10);
         emptyPlantButton.setLayoutY(yPosition + 90);
         emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
         root.getChildren().add(emptyPlantButton);
@@ -231,14 +231,14 @@ public class GameScreen {
             	
             	
             	X = 160 + plantColumns[rowIndex] * 68;
-                Y = rowIndex * (600 / NUM_ROWS) + 30;
+                Y = rowIndex * (600 / NUM_ROWS) + 35;
      
                 
                 Rectangle highlight = new Rectangle();
                 highlight.setX(X);
                 highlight.setY(Y);
-                highlight.setWidth(68); // ความกว้างของ column
-                highlight.setHeight(600 / NUM_ROWS); // ความสูงของ row
+                highlight.setWidth(50); // ความกว้างของ column
+                highlight.setHeight(50); // ความสูงของ row
                 highlight.setFill(Color.TRANSPARENT); // สีโปร่งใส
                 highlight.setStroke(Color.RED); // เส้นสีแดง
                 highlight.setStrokeWidth(2); // ความหนาของเส้น

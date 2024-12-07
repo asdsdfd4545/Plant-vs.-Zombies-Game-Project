@@ -14,8 +14,8 @@ public class TrapPlant extends Plant {
         this.plantCost = 20;
         Image plantImage = new Image(getClass().getResource("/res/trapplant.png").toExternalForm());
         shape = new ImageView(plantImage);
-        shape.setFitWidth(40);  // Set the width and height
-        shape.setFitHeight(40);
+        shape.setFitWidth(60);  // Set the width and height
+        shape.setFitHeight(60);
         shape.setX(x);  // Set the X position of the plant
         shape.setY(y);  // Set the Y position of the plan
     }
