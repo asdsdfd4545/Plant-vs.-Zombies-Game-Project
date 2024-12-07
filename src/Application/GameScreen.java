@@ -8,6 +8,7 @@ import Logic.Bullet;
 import Logic.GameCurrency;
 import Logic.Zombie;
 import javafx.animation.AnimationTimer;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class GameScreen {
     private static final int ZOMBIE_SPAWN_INTERVAL = 2000;
     private int[] plantColumns;
     private boolean gameStarted;
+    private int currentRowIndex;
+    private Rectangle currentHighlight;
 
     public GameScreen() {
         root = new Pane();
@@ -68,9 +72,17 @@ public class GameScreen {
         root.getChildren().add(moneyLabel);
 
         // Plant Buttons for each row (BasePlant, SuperPlant, TrapPlant)
-        for (int rowIndex = 0; rowIndex < NUM_ROWS; rowIndex++) {
-            createPlantRowButtons(rowIndex);
-        }
+        
+        createPlantRowButtons(1);
+
+        //selectRows Button
+        Button btn1 = createSelectRowButtons("A", 410, 0);
+        Button btn2 = createSelectRowButtons("B", 440, 1);
+        Button btn3 = createSelectRowButtons("C", 470, 2);
+        Button btn4 = createSelectRowButtons("D", 500, 3);
+        Button btn5 = createSelectRowButtons("E", 530, 4);
+
+        root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
         
         // Start Button
         Button startButton = new Button("Start");
@@ -101,9 +113,35 @@ public class GameScreen {
             startGameLoop();
             gameStarted = true;
         }
+        if (currentHighlight != null) {
+            root.getChildren().remove(currentHighlight);
+        }
     }
+    private Button createSelectRowButtons(String label, double layoutY, int rowIndex) {
+        Button button = new Button(label);
+        button.setId("select");
+        button.setPrefWidth(55);
+        button.setPrefHeight(20);
+        button.setLayoutX(20);
+        button.setLayoutY(layoutY);
+        button.setOnAction(event -> selectAction(rowIndex));
+        button.setVisible(true);
+        return button;
+    	
+    }
+    
 
-    private void createPlantRowButtons(int rowIndex) {
+    private void selectAction(int rowIndex) {
+		// TODO Auto-generated method stub
+    	currentRowIndex = rowIndex;
+    	plantAction(rowIndex, "Empty");
+    	//กด1ครั้งขยับ collumb return collumb
+    	//แสดง วงสีแดงว่าเลือก
+    	//เปลี่ยนplantbutให้รับค่าจากreturnนี้
+		
+	}
+
+	private void createPlantRowButtons(int rowIndex) {
         double yPosition = 40 + rowIndex * 110;  // Y position for each row's buttons
 
         // Create Button for BasePlant
@@ -113,7 +151,7 @@ public class GameScreen {
         basePlantButton.setPrefHeight(15);
         basePlantButton.setLayoutX(20);
         basePlantButton.setLayoutY(yPosition);
-        basePlantButton.setOnAction(event -> plantAction(rowIndex, "BasePlant"));
+        basePlantButton.setOnAction(event -> plantAction(currentRowIndex, "BasePlant"));
         root.getChildren().add(basePlantButton);
 
         // Create Button for SuperPlant
@@ -123,7 +161,7 @@ public class GameScreen {
         superPlantButton.setPrefHeight(15);
         superPlantButton.setLayoutX(20);
         superPlantButton.setLayoutY(yPosition + 30);
-        superPlantButton.setOnAction(event -> plantAction(rowIndex, "SuperPlant"));
+        superPlantButton.setOnAction(event -> plantAction(currentRowIndex, "SuperPlant"));
         root.getChildren().add(superPlantButton);
 
         // Create Button for TrapPlant
@@ -133,13 +171,27 @@ public class GameScreen {
         trapPlantButton.setPrefHeight(15);
         trapPlantButton.setLayoutX(20);
         trapPlantButton.setLayoutY(yPosition + 60);
-        trapPlantButton.setOnAction(event -> plantAction(rowIndex, "TrapPlant"));
+        trapPlantButton.setOnAction(event -> plantAction(currentRowIndex, "TrapPlant"));
         root.getChildren().add(trapPlantButton);
+        
+        Button emptyPlantButton = new Button("Empty");
+        emptyPlantButton.setId("Plant");
+        emptyPlantButton.setPrefWidth(55);
+        emptyPlantButton.setPrefHeight(15);
+        emptyPlantButton.setLayoutX(20);
+        emptyPlantButton.setLayoutY(yPosition + 90);
+        emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
+        root.getChildren().add(emptyPlantButton);
+        
     }
 
     private void plantAction(int rowIndex, String plantType) {
         int spendingcost = 0;
         switch (plantType) {
+        	case "Empty":
+        		spendingcost = 0;
+        	break; // Prevent fall-through
+        	
             case "BasePlant":
                 spendingcost = 50;
                 break; // Prevent fall-through
@@ -154,6 +206,22 @@ public class GameScreen {
         if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
             double x = 160 + plantColumns[rowIndex] * 68;
             double y = rowIndex * (600 / NUM_ROWS) + 30;
+            if (currentHighlight != null) {
+                root.getChildren().remove(currentHighlight);
+            }
+            Rectangle highlight = new Rectangle();
+            highlight.setX(x);
+            highlight.setY(y);
+            highlight.setWidth(68); // ความกว้างของ column
+            highlight.setHeight(600 / NUM_ROWS); // ความสูงของ row
+            highlight.setFill(Color.TRANSPARENT); // สีโปร่งใส
+            highlight.setStroke(Color.RED); // เส้นสีแดง
+            highlight.setStrokeWidth(2); // ความหนาของเส้น
+            root.getChildren().add(highlight);
+            
+
+            // เก็บ Highlight ปัจจุบัน
+            currentHighlight = highlight;
 
             // Create and add the appropriate plant type
             Plant plant = null;
@@ -177,6 +245,7 @@ public class GameScreen {
             plantColumns[rowIndex]++;
             updateMoneyDisplay();
         }
+        
     }
 
     private void spawnZombie() {
