@@ -30,10 +30,11 @@ public class GameScreen {
     private List<Bullet> bullets;
     private List<Zombie> zombies;
     private List<Plant> plants;
+    private boolean[][] plantGrid = new boolean[NUM_ROWS][NUM_COLUMNS];
     private Random random;
     private static final int NUM_ROWS = 5;
     private static final int NUM_COLUMNS = 9;
-    private static final int ZOMBIE_SPAWN_INTERVAL = 2000;
+    private static final int ZOMBIE_SPAWN_INTERVAL = 5000;
     private int[] plantColumns;
     private boolean gameStarted;
     private int currentRowIndex = -1;
@@ -189,24 +190,48 @@ public class GameScreen {
     	if(rowIndex != LastButtonPush) plantColumns[rowIndex] = 0;
     	LastButtonPush = rowIndex;
     	int spendingcost = 0;
-            switch (plantType) {
-            	case "Empty":
-            		spendingcost = 0;
-            		break; // Prevent fall-through
-                case "BasePlant":
-                    spendingcost = 50;
-                    break; // Prevent fall-through
-                case "SuperPlant":
-                    spendingcost = 100;
-                    break; // Prevent fall-through
-                case "TrapPlant":
-                    spendingcost = 20;
-                    break; // Prevent fall-through
+        switch (plantType) {
+         	case "Empty":
+            	spendingcost = 0;
+            	break; // Prevent fall-through
+            case "BasePlant":
+                spendingcost = 50;
+                break; // Prevent fall-through
+            case "SuperPlant":
+                spendingcost = 100;
+                break; // Prevent fall-through
+            case "TrapPlant":
+                 spendingcost = 20;
+                 break; // Prevent fall-through
+        }
+        
+        if (plantColumns[rowIndex] >= NUM_COLUMNS) plantColumns[rowIndex] = 0;
+        
+        if (plantGrid[rowIndex][plantColumns[rowIndex]]) {
+        	if (currentHighlight != null) {
+                root.getChildren().remove(currentHighlight);
             }
-            
-            if (plantColumns[rowIndex] >= NUM_COLUMNS) plantColumns[rowIndex] = 0;
+        	
+        	X = 160 + plantColumns[rowIndex] * 68;
+            Y = rowIndex * (600 / NUM_ROWS) + 35;
+ 
+            Rectangle highlight = new Rectangle();
+            highlight.setX(X);
+            highlight.setY(Y);
+            highlight.setWidth(50); // ความกว้างของ column
+            highlight.setHeight(50); // ความสูงของ row
+            highlight.setFill(Color.TRANSPARENT); // สีโปร่งใส
+            highlight.setStroke(Color.RED); // เส้นสีแดง
+            highlight.setStrokeWidth(2); // ความหนาของเส้น
+            root.getChildren().add(highlight);
+        	
+            currentHighlight = highlight;
+            plantColumns[rowIndex]++;
+        
+            return;
+        }
 
-            if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
+        if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
             	// Create and add the appropriate plant type
             	if (currentHighlight != null) {
                     root.getChildren().remove(currentHighlight);
@@ -228,6 +253,7 @@ public class GameScreen {
                 if (plant != null) {
                     plants.add(plant);
                     root.getChildren().add(plant.getShape());
+                    plantGrid[rowIndex][plantColumns[rowIndex]] = true;
                 }
             	
             	
@@ -250,6 +276,7 @@ public class GameScreen {
                 currentHighlight = highlight;
 
                 plantColumns[rowIndex]++;
+                
                 updateMoneyDisplay();
  
             }
