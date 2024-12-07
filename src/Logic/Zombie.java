@@ -43,9 +43,6 @@ public class Zombie {
                 new Image(getClass().getResource("/res/kappa_dead.png").toExternalForm())
             });
 
-        // Zombie image (customize accordingly)
-//        Image zombieImage = new Image(getClass().getResource("/res/zombie.png").toExternalForm());
-//        shape = new ImageView(zombieImage);
         shape = new ImageView(animations.get("walk")[0]);
         shape.setFitWidth(40);
         shape.setFitHeight(60);
@@ -53,17 +50,48 @@ public class Zombie {
         shape.setY(y);
         startAnimation();
     }
+    private void startAnimation() {
+        AnimationTimer animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (now - lastFrameTime >= animationSpeed) {
+                    // เปลี่ยนเฟรมของสถานะปัจจุบัน
+                    Image[] currentFrames = animations.get(currentState);
+                    if (currentFrames != null) {
+                        frameIndex = (frameIndex + 1) % currentFrames.length;
+                        shape.setImage(currentFrames[frameIndex]);
+                    }
+                    lastFrameTime = now;
+
+                    // ถ้าสถานะคือ dead และถึงเฟรมสุดท้ายแล้วหยุดแอนิเมชัน
+                    if (currentState.equals("dead") && frameIndex == currentFrames.length - 1) {
+                        stop(); // หยุด AnimationTimer
+                    }
+                }
+            }
+        };
+        animationTimer.start();
+    }
 
     public void update() {
         // ถ้า Zombie ยังไม่ตายให้เดิน
         if (!currentState.equals("dead")) {
             if (health < 3) { // ตัวอย่าง: zombie โดนโจมตีแล้ว
                 setState("hitted");
-            } else {
+            } 
+    
+            else {
                 setState("walk");
             }
             x -= speed;
             shape.setX(x);
+        }
+    }
+    public void setState(String newState) {
+        // เปลี่ยนสถานะแอนิเมชัน
+        if (!currentState.equals(newState)) {
+            currentState = newState;
+            frameIndex = 0; // รีเซ็ตเฟรม
         }
     }
 
@@ -96,33 +124,7 @@ public class Zombie {
     public void setShape(ImageView shape) {
         this.shape = shape;
     }
-    private void startAnimation() {
-        AnimationTimer animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (now - lastFrameTime >= animationSpeed) {
-                    // เปลี่ยนเฟรมของสถานะปัจจุบัน
-                    Image[] currentFrames = animations.get(currentState);
-                    if (currentFrames != null) {
-                        frameIndex = (frameIndex + 1) % currentFrames.length;
-                        shape.setImage(currentFrames[frameIndex]);
-                    }
-                    lastFrameTime = now;
+    
 
-                    // ถ้าสถานะคือ dead และถึงเฟรมสุดท้ายแล้วหยุดแอนิเมชัน
-                    if (currentState.equals("dead") && frameIndex == currentFrames.length - 1) {
-                        stop(); // หยุด AnimationTimer
-                    }
-                }
-            }
-        };
-        animationTimer.start();
-    }
-    public void setState(String newState) {
-        // เปลี่ยนสถานะแอนิเมชัน
-        if (!currentState.equals(newState)) {
-            currentState = newState;
-            frameIndex = 0; // รีเซ็ตเฟรม
-        }
-    }
+    
 }
