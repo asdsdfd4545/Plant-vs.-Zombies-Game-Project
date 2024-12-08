@@ -13,6 +13,7 @@ import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -109,7 +110,7 @@ public class GameScreen {
         startButton.setPrefHeight(30);
         startButton.setPrefWidth(75);
         startButton.setLayoutX(10);
-        startButton.setLayoutY(100);
+        startButton.setLayoutY(60);
         startButton.setOnAction(event -> startAction());
         root.getChildren().add(startButton);
     }
@@ -239,35 +240,59 @@ public class GameScreen {
 	}
 
 	private void createPlantRowButtons(int rowIndex) {
-        double yPosition = 100 + rowIndex * 110;  // Y position for each row's buttons
+        double yPosition = rowIndex * 110;  // Y position for each row's buttons
 
         // Create Button for BasePlant
-        Button basePlantButton = new Button("BasePlant");
+        Button basePlantButton = new Button("50");
         basePlantButton.setId("Plant");
         basePlantButton.setPrefWidth(75);
-        basePlantButton.setPrefHeight(15);
+        basePlantButton.setPrefHeight(65);
         basePlantButton.setLayoutX(10);
         basePlantButton.setLayoutY(yPosition);
+        Image image = new Image("/res/baseplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(40); // ปรับความกว้างของรูปภาพ
+        imageView.setFitHeight(40); // ปรับความสูงของรูปภาพ
+        imageView.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
+        // ตั้งค่าให้แสดงรูปภาพในปุ่ม
+        basePlantButton.setGraphic(imageView);
+        basePlantButton.setContentDisplay(ContentDisplay.TOP);
         basePlantButton.setOnAction(event -> plantAction(currentRowIndex, "BasePlant"));
         root.getChildren().add(basePlantButton);
 
         // Create Button for SuperPlant
-        Button superPlantButton = new Button("SuperPlant");
+        Button superPlantButton = new Button("100");
         superPlantButton.setId("Plant");
         superPlantButton.setPrefWidth(75);
-        superPlantButton.setPrefHeight(15);
+        superPlantButton.setPrefHeight(65);
         superPlantButton.setLayoutX(10);
-        superPlantButton.setLayoutY(yPosition + 30);
+        superPlantButton.setLayoutY(yPosition + 75);
+        Image image2 = new Image("/res/superplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
+        ImageView imageView2 = new ImageView(image2);
+        imageView2.setFitWidth(45); // ปรับความกว้างของรูปภาพ
+        imageView2.setFitHeight(45); // ปรับความสูงของรูปภาพ
+        imageView2.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
+        // ตั้งค่าให้แสดงรูปภาพในปุ่ม
+        superPlantButton.setGraphic(imageView2);
+        superPlantButton.setContentDisplay(ContentDisplay.TOP);
         superPlantButton.setOnAction(event -> plantAction(currentRowIndex, "SuperPlant"));
         root.getChildren().add(superPlantButton);
 
         // Create Button for TrapPlant
-        Button trapPlantButton = new Button("TrapPlant");
+        Button trapPlantButton = new Button("20");
         trapPlantButton.setId("Plant");
         trapPlantButton.setPrefWidth(75);
-        trapPlantButton.setPrefHeight(15);
+        trapPlantButton.setPrefHeight(65);
         trapPlantButton.setLayoutX(10);
-        trapPlantButton.setLayoutY(yPosition + 60);
+        trapPlantButton.setLayoutY(yPosition + 150);
+        Image image3 = new Image("/res/trapplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
+        ImageView imageView3 = new ImageView(image3);
+        imageView3.setFitWidth(40); // ปรับความกว้างของรูปภาพ
+        imageView3.setFitHeight(40); // ปรับความสูงของรูปภาพ
+        imageView3.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
+        // ตั้งค่าให้แสดงรูปภาพในปุ่ม
+        trapPlantButton.setGraphic(imageView3);
+        trapPlantButton.setContentDisplay(ContentDisplay.TOP);
         trapPlantButton.setOnAction(event -> plantAction(currentRowIndex, "TrapPlant"));
         root.getChildren().add(trapPlantButton);
         
@@ -276,7 +301,7 @@ public class GameScreen {
         emptyPlantButton.setPrefWidth(75);
         emptyPlantButton.setPrefHeight(15);
         emptyPlantButton.setLayoutX(10);
-        emptyPlantButton.setLayoutY(yPosition + 90);
+        emptyPlantButton.setLayoutY(yPosition + 230);
         emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
         root.getChildren().add(emptyPlantButton);
         
@@ -469,10 +494,13 @@ public class GameScreen {
                                             root.getChildren().remove(plant.getShape());
                                             plants.remove(plant);
                                             zombie.startMovement();
+                                            zombie.setState("walk");
+                                            zombie.setAttackTimeline(null);
                                             for (Kappa otherZombie : zombies) {
                                                 if (otherZombie.isAttacking()&&(zombie.getY()==otherZombie.getY())) {
                                                     otherZombie.startMovement();
                                                     otherZombie.setState("walk");
+                                                    otherZombie.setAttackTimeline(null);
                                                 }
                                             }
                                         }
@@ -483,7 +511,6 @@ public class GameScreen {
                         );
                         attackTimeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
                         attackTimeline.play();
-
                         zombie.setAttackTimeline(attackTimeline);
                     }
                     break;
