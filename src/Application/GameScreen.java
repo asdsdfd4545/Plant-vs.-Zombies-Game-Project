@@ -6,7 +6,8 @@ import Plants.SuperPlant;
 import Plants.TrapPlant;
 import Logic.Bullet;
 import Logic.GameCurrency;
-import zombies.Zombie;
+import zombies.Berserker;
+import zombies.Kappa;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -28,7 +29,7 @@ public class GameScreen {
     private Pane root;
     private Label moneyLabel;
     private List<Bullet> bullets;
-    private List<Zombie> zombies;
+    private List<Kappa> zombies;
     private List<Plant> plants;
     private boolean[][] plantGrid = new boolean[NUM_ROWS][NUM_COLUMNS];
     private Random random;
@@ -290,7 +291,7 @@ public class GameScreen {
         double spawnY = (row * (600 / NUM_ROWS)) + 30;
         double spawnX = 800;  // Spawn from the right side of the screen
 
-        Zombie zombie = new Zombie(spawnX, spawnY, 1); // Speed 1 for example
+        Kappa zombie = new Berserker(spawnX, spawnY); // Speed 1 for example
         zombies.add(zombie);
 
         Image zombieImage = new Image(getClass().getResource("/res/zombie.png").toExternalForm());
@@ -308,9 +309,9 @@ public class GameScreen {
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
             Bullet bullet = bulletIterator.next();
-            Iterator<Zombie> zombieIterator = zombies.iterator();
+            Iterator<Kappa> zombieIterator = zombies.iterator();
             while (zombieIterator.hasNext()) {
-                Zombie zombie = zombieIterator.next();
+            	Kappa zombie = zombieIterator.next();
                 if (bullet.getShape().getBoundsInParent().intersects(zombie.getShape().getBoundsInParent())) {
                     zombie.takeDamage();
                     root.getChildren().remove(bullet.getShape());
@@ -326,9 +327,9 @@ public class GameScreen {
         }
 
         // Check plant collisions
-        Iterator<Zombie> zombieIterator = zombies.iterator();
+        Iterator<Kappa> zombieIterator = zombies.iterator();
         while (zombieIterator.hasNext()) {
-            Zombie zombie = zombieIterator.next();
+        	Kappa zombie = zombieIterator.next();
             Iterator<Plant> plantIterator = plants.iterator();
             while (plantIterator.hasNext()) {
                 Plant plant = plantIterator.next();
@@ -375,7 +376,7 @@ public class GameScreen {
                 }
 
                 // Update Zombies
-                for (Zombie zombie : zombies) {
+                for (Kappa zombie : zombies) {
                     zombie.update();
 
                     // Check if zombie reaches the left side of the screen

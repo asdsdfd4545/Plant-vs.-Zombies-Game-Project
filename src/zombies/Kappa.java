@@ -7,22 +7,22 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Zombie {
-    private double x, y;
-    private double speed;
-    private int health;
-    private ImageView shape;
-    private Map<String, Image[]> animations; // เก็บแอนิเมชันทั้งหมด
-    private String currentState = "walk"; // สถานะแอนิเมชันปัจจุบัน
-    private int frameIndex = 0; // เฟรมปัจจุบัน
-    private long lastFrameTime = 0; // เวลาเฟรมสุดท้าย
-    private long animationSpeed = 300_000_000; // ความเร็วแอนิเมชัน (150ms ต่อเฟรม)
+public class Kappa {
+	protected double x, y;
+    protected double speed;
+    protected int health;
+    protected ImageView shape;
+    protected Map<String, Image[]> animations; // เก็บแอนิเมชันทั้งหมด
+    protected String currentState = "walk"; // สถานะแอนิเมชันปัจจุบัน
+    protected int frameIndex = 0; // เฟรมปัจจุบัน
+    protected long lastFrameTime = 0; // เวลาเฟรมสุดท้าย
+    protected long animationSpeed = 300_000_000; // ความเร็วแอนิเมชัน (150ms ต่อเฟรม)
 
-    public Zombie(double x, double y, double speed) {
+    public Kappa(double x, double y) {
         this.x = x;
         this.y = y;
-        this.speed = speed;
-        this.health = 3; // Example health value
+        this.setSpeed(1);
+        this.setHealth(3);
         
         animations = new HashMap<>();
         animations.put("walk", new Image[] {
@@ -44,13 +44,14 @@ public class Zombie {
             });
 
         shape = new ImageView(animations.get("walk")[0]);
-        shape.setFitWidth(40);
+        shape.setFitWidth(50);
         shape.setFitHeight(60);
         shape.setX(x);
         shape.setY(y);
         startAnimation();
     }
-    private void startAnimation() {
+    
+    public void startAnimation() {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -74,9 +75,9 @@ public class Zombie {
     }
 
     public void update() {
-        // ถ้า Zombie ยังไม่ตายให้เดิน
+        // ถ้า Kappa ยังไม่ตายให้เดิน
         if (!currentState.equals("dead")) {
-            if (health < 3) { // ตัวอย่าง: zombie โดนโจมตีแล้ว
+            if (health < 3) { // ตัวอย่าง: Kappa โดนโจมตีแล้ว
                 setState("hitted");
             } 
     
@@ -87,6 +88,7 @@ public class Zombie {
             shape.setX(x);
         }
     }
+    
     public void setState(String newState) {
         // เปลี่ยนสถานะแอนิเมชัน
         if (!currentState.equals(newState)) {
@@ -125,6 +127,22 @@ public class Zombie {
         this.shape = shape;
     }
     
-
+	public int getHealth() {
+		return health;
+	}
+	
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	public double getSpeed() {
+		return speed;
+	}
+	
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
     
+    
+
 }
