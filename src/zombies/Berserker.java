@@ -10,7 +10,7 @@ public class Berserker extends Kappa{
 	public Berserker(double x, double y) {
 		super(x, y);
 		this.setHealth(6);
-		this.setSpeed(0.4);
+		this.setSpeed(0.5);
 		
 		animations = new HashMap<>();
         animations.put("walk", new Image[] {
