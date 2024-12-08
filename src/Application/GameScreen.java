@@ -43,6 +43,12 @@ public class GameScreen {
     private int LastButtonPush = -1;
     private Rectangle currentHighlight;
     private double X,Y;
+    private Label timerLabel; // Label to show the countdown timer
+    private int countdownTime = 3; // 1 minute countdown time
+    private boolean gameResetInProgress = false; // Flag to prevent re-triggering reset before the countdown is done
+    private AnimationTimer countdownTimer; // AnimationTimer to handle the countdown
+    private boolean gamePaused = false;  // Flag to control if the game is paused after timer ends
+    private int Round = 0;
 
     public GameScreen() {
         root = new Pane();
@@ -89,6 +95,15 @@ public class GameScreen {
 
         root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
         
+        // Timer Label - Display Countdown
+        timerLabel = new Label("Time: 01:00");
+        timerLabel.setFont(new Font("Arial", 16));
+        timerLabel.setTextFill(Color.BLACK);
+        timerLabel.setLayoutX(700); // Position it on the top-right corner
+        timerLabel.setLayoutY(20);
+        timerLabel.setStyle("-fx-background-color: white; -fx-padding: 5;");
+        root.getChildren().add(timerLabel);
+        
         // Start Button
         Button startButton = new Button("Start");
         startButton.setPrefHeight(30);
@@ -104,24 +119,101 @@ public class GameScreen {
     }
 
     private void startAction() {
+        Round++;
+    	
         if (!gameStarted) {
-            // Hide all plant purchase buttons
-            for (Node node : root.getChildren()) {
-                if (node instanceof Button) {
-                    Button button = (Button) node;
-                    if ("Plant".equals(button.getId()) || "select".equals(button.getId())) {
-                        button.setVisible(false);
-                    }
+            // Start Game
+            startGame();
+        }
+
+        // Start countdown timer if not already in progress
+        if (!gameResetInProgress) {
+            startCountdownTimer();
+        }
+
+        // Existing code to hide plant buttons, spawn zombies, etc.
+    }
+    
+    private void startGame() {
+        // Hide all plant purchase buttons
+        for (Node node : root.getChildren()) {
+            if (node instanceof Button) {
+                Button button = (Button) node;
+                if ("Plant".equals(button.getId()) || "select".equals(button.getId())) {
+                    button.setVisible(false);
                 }
             }
-            spawnZombie();
-            startGameLoop();
-            gameStarted = true;
         }
-        if (currentHighlight != null) {
-            root.getChildren().remove(currentHighlight);
-        }
+        gamePaused = false;
+        spawnZombie();
+        startGameLoop();
+        gameStarted = true;
     }
+    
+    private void startCountdownTimer() {
+        gameResetInProgress = true; // Prevent multiple resets during countdown
+
+        // Initialize AnimationTimer to update every frame (1/60 seconds)
+        countdownTimer = new AnimationTimer() {
+            private long lastUpdate = 0;
+
+            @Override
+            public void handle(long now) {
+                // Check if one second has passed
+                if (now - lastUpdate >= 1_000_000_000) { // 1 second
+                    if (countdownTime > 0) {
+                        countdownTime--;
+                        int minutes = countdownTime / 60;
+                        int seconds = countdownTime % 60;
+                        timerLabel.setText(String.format("Time: %02d:%02d", minutes, seconds));
+                    } else {
+                        resetGame();
+                    }
+                    lastUpdate = now;
+                }
+            }
+        };
+
+        countdownTimer.start();
+    }
+    
+
+    private void resetGame() {
+        // Stop game actions
+    	
+    	gamePaused = true; // Pause the game
+        countdownTimer.stop(); // Stop the countdown timer
+        stopGameLoop(); // Stop game loop (no zombies, bullets, etc.)
+
+        // Reset the plantGrid to default (all false)
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLUMNS; j++) {
+                plantGrid[i][j] = false;
+            }
+        }
+        
+        currentRowIndex = -1;
+        LastButtonPush = -1;
+        
+        bullets.clear();
+        plants.clear();
+        zombies.clear();
+
+        // Reset the game screen
+        root.getChildren().clear();
+        
+        if (Round >= 3) {
+    		switchToYouWinScreen();
+    		return;
+    	}
+        
+        initializeGameScreen(); // Reinitialize the game screen
+        countdownTime = 3; // Reset the countdown timer
+        gameStarted = false; // Mark game as not started
+        gameResetInProgress = false; // Allow next game start
+        updateMoneyDisplay(); // Reset money display
+    }
+    
     private Button createSelectRowButtons(String label, double layoutY, int rowIndex) {
         Button button = new Button(label);
         button.setId("select");
@@ -284,9 +376,6 @@ public class GameScreen {
             }
     }
  
-        
-    
-
     private void spawnZombie() {
         int row = random.nextInt(NUM_ROWS);
         double spawnY = (row * (600 / NUM_ROWS)) + 30;
@@ -350,21 +439,43 @@ public class GameScreen {
         root.getChildren().clear();
 
         Label gameOverLabel = new Label("Game Over");
-        gameOverLabel.setFont(new Font("Arial", 48));
+        gameOverLabel.setFont(new Font("Arial", 60));
         gameOverLabel.setTextFill(Color.RED);
-        gameOverLabel.setLayoutX(260);
-        gameOverLabel.setLayoutY(260);
+        gameOverLabel.setLayoutX(275);
+        gameOverLabel.setLayoutY(240);
 
         root.setStyle("-fx-background-color: black;");
         root.getChildren().add(gameOverLabel);
     }
+    
+    private void switchToYouWinScreen() {
+        root.getChildren().clear();
 
+        Label youWinLabel = new Label("You Win");
+        youWinLabel.setFont(new Font("Arial", 60));
+        youWinLabel.setTextFill(Color.GREEN);
+        youWinLabel.setLayoutX(275);
+        youWinLabel.setLayoutY(240);
+
+        root.setStyle("-fx-background-color: black;");
+        root.getChildren().add(youWinLabel);
+    }
+
+ // Game loop should be stopped when the game is paused
     private void startGameLoop() {
+        if (gamePaused) return; // Don't start the game loop if the game is paused
+
         AnimationTimer gameLoop = new AnimationTimer() {
             private long lastZombieSpawnTime = 0;
 
             @Override
             public void handle(long now) {
+                // If the game is paused, stop the loop
+                if (gamePaused) {
+                    stop();
+                    return;
+                }
+
                 // Update bullets
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
@@ -406,7 +517,10 @@ public class GameScreen {
 
         gameLoop.start();
     }
-
+    
+    private void stopGameLoop() {
+        gamePaused = true; // Pause the game loop
+    }
 
     public Pane getRoot() {
         return root;

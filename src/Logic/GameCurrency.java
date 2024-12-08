@@ -2,7 +2,7 @@ package Logic;
 
 public class GameCurrency {
     private static int money;
-    private static final int MAX_MONEY = 2000;
+    private static final int MAX_MONEY = 20000;
 
     public static void setMoney() {
     	GameCurrency.money = MAX_MONEY;
