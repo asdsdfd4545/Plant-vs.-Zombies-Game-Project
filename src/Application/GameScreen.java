@@ -8,6 +8,7 @@ import Logic.Bullet;
 import Logic.GameCurrency;
 import zombies.Berserker;
 import zombies.Kappa;
+import zombies.Wukong;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -291,7 +292,7 @@ public class GameScreen {
         double spawnY = (row * (600 / NUM_ROWS)) + 30;
         double spawnX = 800;  // Spawn from the right side of the screen
 
-        Kappa zombie = new Berserker(spawnX, spawnY); // Speed 1 for example
+        Kappa zombie = new Wukong(spawnX, spawnY); // Speed 1 for example
         zombies.add(zombie);
 
         Image zombieImage = new Image(getClass().getResource("/res/zombie.png").toExternalForm());
