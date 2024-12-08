@@ -429,8 +429,7 @@ public class GameScreen {
                     bulletIterator.remove();
                     if (zombie.isDead()) {
                         zombie.setState("dead");
-                        
-
+                       
                         // ตั้งเวลาให้ลบ Zombie หลังจาก Animation เสร็จ
                         javafx.animation.Timeline removeZombieTimeline = new javafx.animation.Timeline(
                             new javafx.animation.KeyFrame(
@@ -471,7 +470,7 @@ public class GameScreen {
                                             plants.remove(plant);
                                             zombie.startMovement();
                                             for (Kappa otherZombie : zombies) {
-                                                if (otherZombie.isAttacking()) {
+                                                if (otherZombie.isAttacking()&&(zombie.getY()==otherZombie.getY())) {
                                                     otherZombie.startMovement();
                                                     otherZombie.setState("walk");
                                                 }
