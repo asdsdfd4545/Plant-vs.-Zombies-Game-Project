@@ -381,11 +381,29 @@ public class GameScreen {
         double spawnY = (row * (600 / NUM_ROWS)) + 30;
         double spawnX = 800;  // Spawn from the right side of the screen
 
-        Kappa zombie = new Wukong(spawnX, spawnY); // Speed 1 for example
-        zombies.add(zombie);
-
-        Image zombieImage = new Image(getClass().getResource("/res/zombie.png").toExternalForm());
-        ImageView zombieShape = new ImageView(zombieImage);
+        Random random = new Random();
+        int randomNumber = random.nextInt(Round);
+        Kappa zombie = null;
+        
+        switch (randomNumber) {
+        case 0:
+        	zombie = new Kappa(spawnX, spawnY); 
+            zombies.add(zombie);
+            break;
+        case 1:
+        	zombie = new Berserker(spawnX, spawnY); 
+            zombies.add(zombie);
+            break;
+        case 2:
+        	zombie = new Wukong(spawnX, spawnY); 
+            zombies.add(zombie);
+            break;
+        }
+            
+//        Kappa zombie = new Kappa(spawnX, spawnY);
+//        zombies.add(zombie);
+      
+        ImageView zombieShape = zombie.getShape();
         zombieShape.setFitWidth(40);
         zombieShape.setFitHeight(60);
         zombieShape.setX(zombie.getX());
