@@ -144,6 +144,9 @@ public class GameScreen {
                 }
             }
         }
+        if (currentHighlight != null) {
+            root.getChildren().remove(currentHighlight);
+        }
         gamePaused = false;
         spawnZombie();
         startGameLoop();
@@ -425,33 +428,72 @@ public class GameScreen {
                     root.getChildren().remove(bullet.getShape());
                     bulletIterator.remove();
                     if (zombie.isDead()) {
-                        root.getChildren().remove(zombie.getShape());
-                        zombieIterator.remove();
-                        spawnZombie(); // Spawn a new zombie
+                        zombie.setState("dead");
+                        
+
+                        // ตั้งเวลาให้ลบ Zombie หลังจาก Animation เสร็จ
+                        javafx.animation.Timeline removeZombieTimeline = new javafx.animation.Timeline(
+                            new javafx.animation.KeyFrame(
+                                javafx.util.Duration.seconds(1), // หน่วงเวลา 1 วินาที (หรือความยาว Animation)
+                                event -> {
+                                    root.getChildren().remove(zombie.getShape());
+                                    zombies.remove(zombie);
+                                }
+                            )
+                        );
+                        removeZombieTimeline.setCycleCount(1); // รันแค่ครั้งเดียว
+                        removeZombieTimeline.play();
                     }
+
                     break;
                 }
             }
         }
 
         // Check plant collisions
-        Iterator<Kappa> zombieIterator = zombies.iterator();
-        while (zombieIterator.hasNext()) {
-        	Kappa zombie = zombieIterator.next();
-            Iterator<Plant> plantIterator = plants.iterator();
-            while (plantIterator.hasNext()) {
-                Plant plant = plantIterator.next();
+        for (Kappa zombie : zombies) {
+            for (Plant plant : plants) {
                 if (zombie.getShape().getBoundsInParent().intersects(plant.getShape().getBoundsInParent())) {
-                    // Zombie sacrifices itself to kill the plant
-                    root.getChildren().remove(zombie.getShape());
-                    root.getChildren().remove(plant.getShape());
-                    zombieIterator.remove();
-                    plantIterator.remove();
+                    if (!zombie.isAttacking()&& zombie.getAttackTimeline() == null) {
+                        // Zombie เริ่มโจมตี
+                        zombie.setState("attack");
+                        zombie.stopMovement();
+
+                        // เริ่มโจมตีทุก 1 วินาที
+                        javafx.animation.Timeline attackTimeline = new javafx.animation.Timeline(
+                            new javafx.animation.KeyFrame(
+                                javafx.util.Duration.seconds(1),
+                                event -> {
+                                    if (!plant.isDead() && !zombie.isDead()) {
+                                        plant.takeDamage();
+                                        if (plant.isDead()) {
+                                            root.getChildren().remove(plant.getShape());
+                                            plants.remove(plant);
+                                            zombie.startMovement();
+                                            for (Kappa otherZombie : zombies) {
+                                                if (otherZombie.isAttacking()) {
+                                                    otherZombie.startMovement();
+                                                    otherZombie.setState("walk");
+                                                }
+                                            }
+                                        }
+                                        
+                                    }
+                                }
+                            )
+                        );
+                        attackTimeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
+                        attackTimeline.play();
+
+                        zombie.setAttackTimeline(attackTimeline);
+                    }
                     break;
                 }
             }
         }
+
     }
+
 
     private void switchToGameOverScreen() {
         root.getChildren().clear();

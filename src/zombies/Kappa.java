@@ -17,6 +17,8 @@ public class Kappa {
     protected int frameIndex = 0; // เฟรมปัจจุบัน
     protected long lastFrameTime = 0; // เวลาเฟรมสุดท้าย
     protected long animationSpeed = 300_000_000; // ความเร็วแอนิเมชัน (150ms ต่อเฟรม)
+    private javafx.animation.Timeline attackTimeline;
+
 
     public Kappa(double x, double y) {
         this.x = x;
@@ -76,7 +78,7 @@ public class Kappa {
 
     public void update() {
         // ถ้า Kappa ยังไม่ตายให้เดิน
-        if (!currentState.equals("dead")) {
+        if (!currentState.equals("dead")&&!isAttacking()) {
             if (health < 3) { // ตัวอย่าง: Kappa โดนโจมตีแล้ว
                 setState("hitted");
             } 
@@ -87,7 +89,22 @@ public class Kappa {
             x -= speed;
             shape.setX(x);
         }
+
+
     }
+    public void stopMovement() {
+        this.setSpeed(0); // ตั้งค่าความเร็วเป็น 0 เพื่อหยุดการเคลื่อนที่
+
+    }
+    public void startMovement() {
+        setState("walk"); // ถ้าไม่โจมตี เปลี่ยนสถานะเป็นเดิน
+        this.setSpeed(1);
+    }
+    public void setAttackTimeline(javafx.animation.Timeline timeline) {
+        this.attackTimeline = timeline;
+    }
+
+
     
     public void setState(String newState) {
         // เปลี่ยนสถานะแอนิเมชัน
@@ -96,6 +113,9 @@ public class Kappa {
             frameIndex = 0; // รีเซ็ตเฟรม
         }
     }
+    public boolean isAttacking() {
+        return "attack".equals(currentState);
+    }
 
 
     public void takeDamage() {
@@ -103,7 +123,9 @@ public class Kappa {
         if (health <= 0) {
             setState("dead");
         } else {
-            setState("hitted");
+        	if(!isAttacking()) {
+        		setState("hitted");
+        	}
         }
     }
 
@@ -142,6 +164,14 @@ public class Kappa {
 	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
+
+	public Object getAttackTimeline() {
+		// TODO Auto-generated method stub
+		return this.attackTimeline;
+	}
+
+
+	
     
     
 
