@@ -97,7 +97,20 @@ public class GameScreen {
 
         // Plant Buttons for each row (BasePlant, SuperPlant, TrapPlant)
         
-        createPlantRowButtons(1);
+        Button basePlantButton = createPlantRowButtons("50", 155, "BasePlantImage", 40, 40);
+        basePlantButton.setOnAction(event -> plantAction(currentRowIndex, "BasePlant"));
+        Button superPlantButton = createPlantRowButtons("100", 228, "SuperPlantImage", 45, 45);
+        superPlantButton.setOnAction(event -> plantAction(currentRowIndex, "SuperPlant"));
+        Button trapPlantButton = createPlantRowButtons("20", 299, "TrapPlantImage", 40 ,40);
+        trapPlantButton.setOnAction(event -> plantAction(currentRowIndex, "TrapPlant"));
+        Button emptyPlantButton = new Button("Empty");
+        emptyPlantButton.setId("Plant");
+        emptyPlantButton.setPrefWidth(75);
+        emptyPlantButton.setPrefHeight(15);
+        emptyPlantButton.setLayoutX(9);
+        emptyPlantButton.setLayoutY(372);
+        emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
+        root.getChildren().addAll(basePlantButton, superPlantButton, trapPlantButton, emptyPlantButton);
 
         //selectRows Button
         Button btn1 = createSelectRowButtons("A", 425, 0);
@@ -133,24 +146,20 @@ public class GameScreen {
         buttonSound.play();
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
         pause.setOnFinished(e -> {
-        if (!gameStarted) {
-            // Start Game
-            startGame();
-        }
+        	if (!gameStarted) {
+        		startGame();
+        	}
 
-        // Start countdown timer if not already in progress
-        if (!gameResetInProgress) {
-            startCountdownTimer();
-        }
+        	// Start countdown timer if not already in progress
+        	if (!gameResetInProgress) {
+        		startCountdownTimer();
+        	}
         });
         pause.play();
-
-        // Existing code to hide plant buttons, spawn zombies, etc.
     }
     
     private void startGame() {
         // Hide all plant purchase buttons
-    	
         for (Node node : root.getChildren()) {
             if (node instanceof Button) {
                 Button button = (Button) node;
@@ -189,22 +198,18 @@ public class GameScreen {
                         if(!gameAlreadyEnd) {
                         	nextwaveSound.play();
                         	resetGame();
-                        	
                         }
                     }
                     lastUpdate = now;
                 }
             }
         };
-
         countdownTimer.start();
     }
     
     private void resetGame() {
-        // Stop game actions
-    	
-    	gamePaused = true; // Pause the game
-        countdownTimer.stop(); // Stop the countdown timer
+    	gamePaused = true; 
+        countdownTimer.stop(); 
         stopGameLoop(); // Stop game loop (no zombies, bullets, etc.)
 
         // Reset the plantGrid to default (all false)
@@ -255,72 +260,23 @@ public class GameScreen {
     	
     }
 
-	private void createPlantRowButtons(int rowIndex) {
-        double yPosition = 45 + rowIndex * 110;  // Y position for each row's buttons
-
-        // Create Button for BasePlant
-        Button basePlantButton = new Button("50");
-        basePlantButton.setId("Plant");
-        basePlantButton.setPrefWidth(75);
-        basePlantButton.setPrefHeight(65);
-        basePlantButton.setLayoutX(9);
-        basePlantButton.setLayoutY(yPosition);
-        Image image = ResourceLoader.getImage("BasePlantImage");
+	private Button createPlantRowButtons(String price, double yPosition, String paraImage, int fitWidth, int fitHeights) {
+        Button button = new Button(price);
+        button.setId("Plant");
+        button.setPrefWidth(75);
+        button.setPrefHeight(65);
+        button.setLayoutX(9);
+        button.setLayoutY(yPosition);
+        Image image = ResourceLoader.getImage(paraImage);
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(40); // ปรับความกว้างของรูปภาพ
-        imageView.setFitHeight(40); // ปรับความสูงของรูปภาพ
+        imageView.setFitWidth(fitWidth); // ปรับความกว้างของรูปภาพ
+        imageView.setFitHeight(fitHeights); // ปรับความสูงของรูปภาพ
         imageView.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
         // ตั้งค่าให้แสดงรูปภาพในปุ่ม
-        basePlantButton.setGraphic(imageView);
-        basePlantButton.setContentDisplay(ContentDisplay.TOP);
-        basePlantButton.setOnAction(event -> plantAction(currentRowIndex, "BasePlant"));
-        root.getChildren().add(basePlantButton);
-
-        // Create Button for SuperPlant
-        Button superPlantButton = new Button("100");
-        superPlantButton.setId("Plant");
-        superPlantButton.setPrefWidth(75);
-        superPlantButton.setPrefHeight(65);
-        superPlantButton.setLayoutX(9);
-        superPlantButton.setLayoutY(yPosition + 73);
-        Image image2 = ResourceLoader.getImage("SuperPlantImage");
-        ImageView imageView2 = new ImageView(image2);
-        imageView2.setFitWidth(45); // ปรับความกว้างของรูปภาพ
-        imageView2.setFitHeight(45); // ปรับความสูงของรูปภาพ
-        imageView2.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
-        // ตั้งค่าให้แสดงรูปภาพในปุ่ม
-        superPlantButton.setGraphic(imageView2);
-        superPlantButton.setContentDisplay(ContentDisplay.TOP);
-        superPlantButton.setOnAction(event -> plantAction(currentRowIndex, "SuperPlant"));
-        root.getChildren().add(superPlantButton);
-
-        // Create Button for TrapPlant
-        Button trapPlantButton = new Button("20");
-        trapPlantButton.setId("Plant");
-        trapPlantButton.setPrefWidth(75);
-        trapPlantButton.setPrefHeight(65);
-        trapPlantButton.setLayoutX(9);
-        trapPlantButton.setLayoutY(yPosition + 144);
-        Image image3 = ResourceLoader.getImage("TrapPlantImage");
-        ImageView imageView3 = new ImageView(image3);
-        imageView3.setFitWidth(40); // ปรับความกว้างของรูปภาพ
-        imageView3.setFitHeight(40); // ปรับความสูงของรูปภาพ
-        imageView3.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
-        // ตั้งค่าให้แสดงรูปภาพในปุ่ม
-        trapPlantButton.setGraphic(imageView3);
-        trapPlantButton.setContentDisplay(ContentDisplay.TOP);
-        trapPlantButton.setOnAction(event -> plantAction(currentRowIndex, "TrapPlant"));
-        root.getChildren().add(trapPlantButton);
-        
-        Button emptyPlantButton = new Button("Empty");
-        emptyPlantButton.setId("Plant");
-        emptyPlantButton.setPrefWidth(75);
-        emptyPlantButton.setPrefHeight(15);
-        emptyPlantButton.setLayoutX(9);
-        emptyPlantButton.setLayoutY(yPosition + 217);
-        emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
-        root.getChildren().add(emptyPlantButton);
-        
+        button.setGraphic(imageView);
+        button.setContentDisplay(ContentDisplay.TOP);
+        return button;
+    
     }
 
     private void plantAction(int rowIndex, String plantType) {
