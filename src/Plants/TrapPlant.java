@@ -3,6 +3,7 @@ package Plants;
 import java.util.List;
 
 import Logic.Bullet;
+import assets.ResourceLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -12,7 +13,7 @@ public class TrapPlant extends Plant {
     public TrapPlant(double x, double y) {
         super(x, y, 8);
         this.plantCost = 20;
-        Image plantImage = new Image(getClass().getResource("/res/trapplant.png").toExternalForm());
+        Image plantImage = ResourceLoader.getTrapplantImage();
         shape = new ImageView(plantImage);
         shape.setFitWidth(60);  // Set the width and height
         shape.setFitHeight(60);

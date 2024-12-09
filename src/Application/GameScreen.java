@@ -4,6 +4,7 @@ import Plants.BasePlant;
 import Plants.Plant;
 import Plants.SuperPlant;
 import Plants.TrapPlant;
+import assets.ResourceLoader;
 import Logic.Bullet;
 import Logic.GameCurrency;
 import zombies.Berserker;
@@ -82,13 +83,13 @@ public class GameScreen {
 
     private void initializeGameScreen() {
         // Background
-        Image backgroundImage = new Image(getClass().getResource("/res/background.png").toExternalForm());
+        Image backgroundImage = ResourceLoader.getBackgroundImage();
         ImageView background = new ImageView(backgroundImage);
         background.setFitWidth(800);
         background.setFitHeight(600);
         root.getChildren().add(background);
         
-        gameSound = new AudioClip(getClass().getResource("/res/gameSound.wav").toExternalForm());
+        gameSound = ResourceLoader.getGameSound();
         gameSound.setCycleCount(AudioClip.INDEFINITE); // เล่นซ้ำเมื่อเสียงจบ
         if(!isGameSoundPlaying) gameSound.play();
         isGameSoundPlaying = true;
@@ -141,7 +142,7 @@ public class GameScreen {
 
     private void startAction() {
         Round++;
-        AudioClip buttonSound = new AudioClip(getClass().getResource("/res/button.wav").toExternalForm());
+        AudioClip buttonSound = ResourceLoader.getButtonSound();
         buttonSound.play();
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
         pause.setOnFinished(e -> {
@@ -182,7 +183,7 @@ public class GameScreen {
     
     private void startCountdownTimer() {
         gameResetInProgress = true; // Prevent multiple resets during countdown
-        nextwaveSound = new AudioClip(getClass().getResource("/res/nextwaveSound.wav").toExternalForm());
+        nextwaveSound = ResourceLoader.getNextwaveSound();
 
         // Initialize AnimationTimer to update every frame (1/60 seconds)
         countdownTimer = new AnimationTimer() {
@@ -279,7 +280,7 @@ public class GameScreen {
         basePlantButton.setPrefHeight(65);
         basePlantButton.setLayoutX(9);
         basePlantButton.setLayoutY(yPosition);
-        Image image = new Image("/res/baseplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
+        Image image = ResourceLoader.getBaseplantImage();
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(40); // ปรับความกว้างของรูปภาพ
         imageView.setFitHeight(40); // ปรับความสูงของรูปภาพ
@@ -297,7 +298,7 @@ public class GameScreen {
         superPlantButton.setPrefHeight(65);
         superPlantButton.setLayoutX(9);
         superPlantButton.setLayoutY(yPosition + 73);
-        Image image2 = new Image("/res/superplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
+        Image image2 = ResourceLoader.getSuperplantImage();
         ImageView imageView2 = new ImageView(image2);
         imageView2.setFitWidth(45); // ปรับความกว้างของรูปภาพ
         imageView2.setFitHeight(45); // ปรับความสูงของรูปภาพ
@@ -315,7 +316,7 @@ public class GameScreen {
         trapPlantButton.setPrefHeight(65);
         trapPlantButton.setLayoutX(9);
         trapPlantButton.setLayoutY(yPosition + 144);
-        Image image3 = new Image("/res/trapplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
+        Image image3 = ResourceLoader.getTrapplantImage();
         ImageView imageView3 = new ImageView(image3);
         imageView3.setFitWidth(40); // ปรับความกว้างของรูปภาพ
         imageView3.setFitHeight(40); // ปรับความสูงของรูปภาพ
@@ -338,7 +339,7 @@ public class GameScreen {
     }
 
     private void plantAction(int rowIndex, String plantType) {
-    	AudioClip buttonSound = new AudioClip(getClass().getResource("/res/button.wav").toExternalForm());
+    	AudioClip buttonSound = ResourceLoader.getButtonSound();
         buttonSound.play();
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
         pause.setOnFinished(e -> {
@@ -559,7 +560,7 @@ public class GameScreen {
 
     private void switchToGameOverScreen() {
         root.getChildren().clear();
-        AudioClip loseSound = new AudioClip(getClass().getResource("/res/failureSound.wav").toExternalForm());
+        AudioClip loseSound = ResourceLoader.getFailureSound();
         gameSound.stop();
         loseSound.play();
         gameAlreadyEnd = true;

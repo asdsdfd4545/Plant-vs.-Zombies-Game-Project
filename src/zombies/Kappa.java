@@ -3,6 +3,7 @@ package zombies;
 import java.util.HashMap;
 import java.util.Map;
 
+import assets.ResourceLoader;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,21 +29,21 @@ public class Kappa {
         
         animations = new HashMap<>();
         animations.put("walk", new Image[] {
-        	new Image(getClass().getResource("/res/kappa_walk1.png").toExternalForm()),
-            new Image(getClass().getResource("/res/kappa_walk2.png").toExternalForm())
+        	ResourceLoader.getKappa_walk1Image(),
+            ResourceLoader.getKappa_walk2Image()
         	});
         animations.put("hitted", new Image[] {
-                new Image(getClass().getResource("/res/kappa_hit2.png").toExternalForm()),
-                new Image(getClass().getResource("/res/kappa_hit1.png").toExternalForm())
+        		ResourceLoader.getKappa_hit2Image(),
+        		ResourceLoader.getKappa_hit1Image()
         	});
         animations.put("attack", new Image[] {
-                new Image(getClass().getResource("/res/kappa_attack1.png").toExternalForm()),
-                new Image(getClass().getResource("/res/kappa_attack2.png").toExternalForm()),
-                new Image(getClass().getResource("/res/kappa_attack3.png").toExternalForm()),
-                new Image(getClass().getResource("/res/kappa_attack4.png").toExternalForm())
+                ResourceLoader.getKappa_attack1Image(),
+                ResourceLoader.getKappa_attack2Image(),
+                ResourceLoader.getKappa_attack3Image(),
+                ResourceLoader.getKappa_attack4Image()
             });
         animations.put("dead", new Image[] {
-                new Image(getClass().getResource("/res/kappa_dead.png").toExternalForm())
+                ResourceLoader.getKappa_deadImage()
             });
 
         shape = new ImageView(animations.get("walk")[0]);

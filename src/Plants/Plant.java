@@ -33,7 +33,7 @@ public abstract class Plant {
     public void takeDamage() {
     	if (health > 0) {
             health--;
-            System.out.println("Plant took damage! Current health: " + health);
+//            System.out.println("Plant took damage! Current health: " + health);
     	}
     }
 

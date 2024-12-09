@@ -1,5 +1,6 @@
 package Application;
 
+import assets.ResourceLoader;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,6 +17,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+        	ResourceLoader.loadResources();
             // Create the homepage layout
             Pane homePageRoot = createHomePage(primaryStage); 
 
@@ -35,10 +37,10 @@ public class Main extends Application {
         Pane homePageRoot = new Pane();
 
         // Set background image for homepage
-        Image homePageImage = new Image(getClass().getResource("/res/Homepage.png").toExternalForm());
+        Image homePageImage = ResourceLoader.getHomePageImage();
         ImageView homePageImageView = new ImageView(homePageImage);
-        AudioClip button = new AudioClip(getClass().getResource("/res/button.wav").toExternalForm());
-        AudioClip homeSound = new AudioClip(getClass().getResource("/res/homepageSound.wav").toExternalForm());
+        AudioClip button = ResourceLoader.getButtonSound();
+        AudioClip homeSound = ResourceLoader.getHomepageSound();
         homePageImageView.setFitWidth(800);
         homePageImageView.setFitHeight(600);
         homePageRoot.getChildren().add(homePageImageView);

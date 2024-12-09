@@ -1,5 +1,6 @@
 package Logic;
 
+import assets.ResourceLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -14,7 +15,7 @@ public class Bullet {
         this.damage = damage;
 
         // Assuming you have a bullet image
-        Image bulletImage = new Image(getClass().getResource("/res/bullet.png").toExternalForm());
+        Image bulletImage = ResourceLoader.getBulletImage();
         shape = new ImageView(bulletImage);
         shape.setFitWidth(10);  // Set the bullet width
         shape.setFitHeight(20); // Set the bullet height

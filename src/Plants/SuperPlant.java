@@ -3,6 +3,7 @@ package Plants;
 import java.util.List;
 
 import Logic.Bullet;
+import assets.ResourceLoader;
 import interfaces.Shootable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,7 +14,7 @@ public class SuperPlant extends Plant implements Shootable{
     public SuperPlant(double x, double y) {
         super(x, y, 6);
         this.plantCost = 100;
-        Image plantImage = new Image(getClass().getResource("/res/superplant.png").toExternalForm());
+        Image plantImage = ResourceLoader.getSuperplantImage();
         shape = new ImageView(plantImage);
         shape.setFitWidth(60);  // Set the width and height
         shape.setFitHeight(60);

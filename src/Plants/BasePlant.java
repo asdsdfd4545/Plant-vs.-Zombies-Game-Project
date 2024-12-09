@@ -3,6 +3,7 @@ package Plants;
 import java.util.List;
 
 import Logic.Bullet;
+import assets.ResourceLoader;
 import interfaces.Shootable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,7 +14,7 @@ public class BasePlant extends Plant implements Shootable {
     public BasePlant(double x, double y) {
         super(x, y, 4);
         this.plantCost = 50;
-        Image plantImage = new Image(getClass().getResource("/res/baseplant.png").toExternalForm());
+        Image plantImage = ResourceLoader.getBaseplantImage();
         shape = new ImageView(plantImage);
         shape.setFitWidth(60);  // Set the width and height
         shape.setFitHeight(60);
