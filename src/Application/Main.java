@@ -47,6 +47,13 @@ public class Main extends Application {
         homeSound.setCycleCount(AudioClip.INDEFINITE);
         homeSound.play();
         
+        Image logo = ResourceLoader.getImage("Logo");
+        ImageView logoView = new ImageView(logo);
+        logoView.setLayoutX(125);
+        logoView.setLayoutY(-100);
+        logoView.setFitHeight(500);
+        logoView.setFitWidth(550);
+ 
         // Create "Enter Game" button
         Button enterGameButton = new Button("Enter Game");
         enterGameButton.setPrefWidth(250);
@@ -103,7 +110,7 @@ public class Main extends Application {
             pause.play();
         });
         // Add the buttons to the homepage root
-        homePageRoot.getChildren().addAll(enterGameButton, exitButton);
+        homePageRoot.getChildren().addAll(enterGameButton, exitButton,logoView);
 
         return homePageRoot;
     }

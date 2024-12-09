@@ -13,6 +13,7 @@ public class ResourceLoader {
     public static void loadResources() {
     	loadImage("HomePageImage", "Homepage.png");
     	loadImage("BackGroundImage", "background.png");
+    	loadImage("Logo", "Logo.png");
     	
     	loadImage("BasePlantImage", "baseplant.png");
     	loadImage("SuperPlantImage", "superplant.png" );
