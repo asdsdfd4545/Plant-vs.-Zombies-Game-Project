@@ -19,8 +19,8 @@ public class Berserker extends Kappa{
             ResourceLoader.getImage("Berserker_Walk2Image")
         	});
         animations.put("hitted", new Image[] {
-        		ResourceLoader.getImage("Berserker_Hit2Image"),
-        		ResourceLoader.getImage("Berserker_Hit1Image")
+        		ResourceLoader.getImage("Berserker_Hit1Image"),
+        		ResourceLoader.getImage("Berserker_Hit2Image")
         	});
         animations.put("attack", new Image[] {
                 ResourceLoader.getImage("Berserker_Attack1Image"),
