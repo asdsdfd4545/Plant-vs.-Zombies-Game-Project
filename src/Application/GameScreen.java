@@ -46,6 +46,7 @@ public class GameScreen {
     private Rectangle currentHighlight;
     private double X,Y;
     private Label timerLabel; // Label to show the countdown timer
+    private Label roundLabel;
     private int countdownTime = 60; // 1 minute countdown time
     private boolean gameResetInProgress = false; // Flag to prevent re-triggering reset before the countdown is done
     private AnimationTimer countdownTimer; // AnimationTimer to handle the countdown
@@ -129,6 +130,14 @@ public class GameScreen {
         timerLabel.setLayoutY(2);
         timerLabel.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(timerLabel);
+        
+        roundLabel = new Label("Round : "+(Round+1));
+        roundLabel.setFont(new Font("Comic Sans MS", 14));
+        roundLabel.setTextFill(Color.BLACK);
+        roundLabel.setLayoutX(621); // Position it on the top-right corner
+        roundLabel.setLayoutY(2);
+        roundLabel.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-background-color: white; -fx-padding: 5;");
+        root.getChildren().add(roundLabel);
         
         // Start Button
         Button startButton = new Button("Start");
