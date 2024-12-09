@@ -208,13 +208,13 @@ public class GameScreen {
         currentRowIndex = -1;
         LastButtonPush = -1;
         
-     // Reset the game screen
-        root.getChildren().clear();
-        
         bullets.clear();
         plants.clear();
         zombies.clear();
 
+        // Reset the game screen
+        root.getChildren().clear();
+        
         if (Round >= 3 && !gameAlreadyEnd) {
     		switchToYouWinScreen();
     		return;
