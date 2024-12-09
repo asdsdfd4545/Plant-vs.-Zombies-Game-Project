@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -36,10 +37,14 @@ public class Main extends Application {
         // Set background image for homepage
         Image homePageImage = new Image(getClass().getResource("/res/Homepage.png").toExternalForm());
         ImageView homePageImageView = new ImageView(homePageImage);
+        AudioClip button = new AudioClip(getClass().getResource("/res/button.wav").toExternalForm());
+        AudioClip homeSound = new AudioClip(getClass().getResource("/res/homepageSound.wav").toExternalForm());
         homePageImageView.setFitWidth(800);
         homePageImageView.setFitHeight(600);
         homePageRoot.getChildren().add(homePageImageView);
-
+        homeSound.setCycleCount(AudioClip.INDEFINITE);
+        homeSound.play();
+        
         // Create "Enter Game" button
         Button enterGameButton = new Button("Enter Game");
         enterGameButton.setPrefWidth(250);
@@ -49,12 +54,26 @@ public class Main extends Application {
         enterGameButton.setFont(new Font("Jokerman", 30));
         enterGameButton.setTextFill(Color.WHITE);
         enterGameButton.setStyle("-fx-border-color: white; -fx-border-width: 5px; -fx-background-color: purple; -fx-padding: 5;");
-        enterGameButton.setOnAction(event -> {
-            // When clicked, switch to the game screen
-            GameScreen gameScreen = new GameScreen();  // Instantiate the game screen
-            Scene gameScene = new Scene(gameScreen.getRoot(), 800, 600);  // Set the scene size
-            primaryStage.setScene(gameScene);  // Switch to the game screen
+        enterGameButton.setOnMouseEntered(event -> {
+            enterGameButton.setStyle("-fx-border-color: white; -fx-border-width: 5px; -fx-background-color: purple; -fx-padding: 5; -fx-effect: dropshadow(gaussian, gray, 10, 0.5, 0, 4);");
         });
+
+        enterGameButton.setOnMouseExited(event -> {
+            enterGameButton.setStyle("-fx-border-color: white; -fx-border-width: 5px; -fx-background-color: purple; -fx-padding: 5; -fx-effect: none;");
+        });
+        enterGameButton.setOnAction(event -> {
+        	homeSound.stop();
+            button.play(); // เล่นเสียงก่อน
+            // ใช้ PauseTransition เพื่อหน่วงเวลาเปลี่ยน Scene
+            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
+            pause.setOnFinished(e -> {
+                GameScreen gameScreen = new GameScreen();  // Instantiate the game screen
+                Scene gameScene = new Scene(gameScreen.getRoot(), 800, 600);  // Set the scene size
+                primaryStage.setScene(gameScene);  // Switch to the game screen
+            });
+            pause.play();
+        });
+
 
         // Create "Exit Game" button
         Button exitButton = new Button("Exit");
@@ -65,11 +84,22 @@ public class Main extends Application {
         exitButton.setFont(new Font("Jokerman", 30));
         exitButton.setTextFill(Color.WHITE);
         exitButton.setStyle("-fx-border-color: white; -fx-border-width: 5px; -fx-background-color: purple; -fx-padding: 5;");
-        exitButton.setOnAction(event -> {
-            // When clicked, exit the application
-            primaryStage.close();
+        exitButton.setOnMouseEntered(event -> {
+            exitButton.setStyle("-fx-border-color: white; -fx-border-width: 5px; -fx-background-color: purple; -fx-padding: 5; -fx-effect: dropshadow(gaussian, gray, 10, 0.5, 0, 4);");
         });
 
+        exitButton.setOnMouseExited(event -> {
+            exitButton.setStyle("-fx-border-color: white; -fx-border-width: 5px; -fx-background-color: purple; -fx-padding: 5; -fx-effect: none;");
+        });
+        exitButton.setOnAction(event -> {
+        	button.play();
+            // When clicked, exit the application
+        	javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(500)); // 200ms ดีเลย์
+            pause.setOnFinished(e -> {
+            primaryStage.close();
+            });
+            pause.play();
+        });
         // Add the buttons to the homepage root
         homePageRoot.getChildren().addAll(enterGameButton, exitButton);
 

@@ -21,6 +21,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -30,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GameScreen {
     private Pane root;
@@ -55,7 +60,10 @@ public class GameScreen {
     private boolean gamePaused = false;  // Flag to control if the game is paused after timer ends
     private int Round = 0;
     private boolean gameAlreadyEnd = false;
-
+    private boolean isGameSoundPlaying = false;
+    private AudioClip gameSound;
+    private AudioClip nextwaveSound;
+    
     public GameScreen() {
         root = new Pane();
         
@@ -80,12 +88,17 @@ public class GameScreen {
         background.setFitHeight(600);
         root.getChildren().add(background);
         
+        gameSound = new AudioClip(getClass().getResource("/res/gameSound.wav").toExternalForm());
+        gameSound.setCycleCount(AudioClip.INDEFINITE); // เล่นซ้ำเมื่อเสียงจบ
+        if(!isGameSoundPlaying) gameSound.play();
+        isGameSoundPlaying = true;
+    
         //Money Label
         moneyLabel = new Label("Money\n" + GameCurrency.getMoney());
         moneyLabel.setFont(new Font("Elephant", 20));
         moneyLabel.setTextAlignment(TextAlignment.CENTER);
         moneyLabel.setTextFill(Color.DARKGREEN);
-        moneyLabel.setLayoutX(5);
+        moneyLabel.setLayoutX(10);
         moneyLabel.setLayoutY(10);
         moneyLabel.setStyle("-fx-border-color: green; -fx-border-width: 3px; -fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(moneyLabel);
@@ -128,7 +141,10 @@ public class GameScreen {
 
     private void startAction() {
         Round++;
-    	
+        AudioClip buttonSound = new AudioClip(getClass().getResource("/res/button.wav").toExternalForm());
+        buttonSound.play();
+        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
+        pause.setOnFinished(e -> {
         if (!gameStarted) {
             // Start Game
             startGame();
@@ -138,12 +154,15 @@ public class GameScreen {
         if (!gameResetInProgress) {
             startCountdownTimer();
         }
+        });
+        pause.play();
 
         // Existing code to hide plant buttons, spawn zombies, etc.
     }
     
     private void startGame() {
         // Hide all plant purchase buttons
+    	
         for (Node node : root.getChildren()) {
             if (node instanceof Button) {
                 Button button = (Button) node;
@@ -163,6 +182,7 @@ public class GameScreen {
     
     private void startCountdownTimer() {
         gameResetInProgress = true; // Prevent multiple resets during countdown
+        nextwaveSound = new AudioClip(getClass().getResource("/res/nextwaveSound.wav").toExternalForm());
 
         // Initialize AnimationTimer to update every frame (1/60 seconds)
         countdownTimer = new AnimationTimer() {
@@ -179,7 +199,9 @@ public class GameScreen {
                         timerLabel.setText(String.format("Time : %02d:%02d", minutes, seconds));
                     } else {
                         if(!gameAlreadyEnd) {
+                        	nextwaveSound.play();
                         	resetGame();
+                        	
                         }
                     }
                     lastUpdate = now;
@@ -211,10 +233,9 @@ public class GameScreen {
         bullets.clear();
         plants.clear();
         zombies.clear();
-
-        // Reset the game screen
+     // Reset the game screen
         root.getChildren().clear();
-        
+
         if (Round >= 3 && !gameAlreadyEnd) {
     		switchToYouWinScreen();
     		return;
@@ -243,8 +264,8 @@ public class GameScreen {
 
     private void selectAction(int rowIndex) {
 		// TODO Auto-generated method stub
-    	currentRowIndex = rowIndex;
-        plantAction(rowIndex, "Empty");
+        	currentRowIndex = rowIndex;
+        	plantAction(rowIndex, "Empty");
 		
 	}
 
@@ -309,7 +330,7 @@ public class GameScreen {
         emptyPlantButton.setId("Plant");
         emptyPlantButton.setPrefWidth(75);
         emptyPlantButton.setPrefHeight(15);
-        emptyPlantButton.setLayoutX(10);
+        emptyPlantButton.setLayoutX(9);
         emptyPlantButton.setLayoutY(yPosition + 217);
         emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
         root.getChildren().add(emptyPlantButton);
@@ -317,6 +338,10 @@ public class GameScreen {
     }
 
     private void plantAction(int rowIndex, String plantType) {
+    	AudioClip buttonSound = new AudioClip(getClass().getResource("/res/button.wav").toExternalForm());
+        buttonSound.play();
+        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
+        pause.setOnFinished(e -> {
     	if (currentRowIndex == -1) return;
     	if(rowIndex != LastButtonPush) plantColumns[rowIndex] = 0;
     	LastButtonPush = rowIndex;
@@ -411,6 +436,8 @@ public class GameScreen {
                 updateMoneyDisplay();
  
             }
+        });
+        pause.play();
     }
  
     private void spawnZombie() {
@@ -532,9 +559,11 @@ public class GameScreen {
 
     private void switchToGameOverScreen() {
         root.getChildren().clear();
-        
+        AudioClip loseSound = new AudioClip(getClass().getResource("/res/failureSound.wav").toExternalForm());
+        gameSound.stop();
+        loseSound.play();
         gameAlreadyEnd = true;
-
+        
         Label gameOverLabel = new Label("Game Over");
         gameOverLabel.setFont(new Font("Comic Sans MS", 120));
         gameOverLabel.setTextFill(Color.RED);
@@ -547,7 +576,8 @@ public class GameScreen {
     
     private void switchToYouWinScreen() {
         root.getChildren().clear();
-        
+        gameSound.stop();
+        nextwaveSound.play();
         gameAlreadyEnd = true;
 
         Label youWinLabel = new Label("You Win");
