@@ -49,7 +49,7 @@ public class GameScreen {
     private Rectangle currentHighlight;
     private double X,Y;
     private Label timerLabel; // Label to show the countdown timer
-    private int countdownTime = 3; // 1 minute countdown time
+    private int countdownTime = 60; // 1 minute countdown time
     private boolean gameResetInProgress = false; // Flag to prevent re-triggering reset before the countdown is done
     private AnimationTimer countdownTimer; // AnimationTimer to handle the countdown
     private boolean gamePaused = false;  // Flag to control if the game is paused after timer ends
@@ -221,7 +221,7 @@ public class GameScreen {
     	}
         
         initializeGameScreen(); // Reinitialize the game screen
-        countdownTime = 3; // Reset the countdown timer
+        countdownTime = 60; // Reset the countdown timer
         gameStarted = false; // Mark game as not started
         gameResetInProgress = false; // Allow next game start
         updateMoneyDisplay(); // Reset money display
