@@ -14,7 +14,7 @@ public class BasePlant extends Plant implements Shootable {
     public BasePlant(double x, double y) {
         super(x, y, 4);
         this.plantCost = 50;
-        Image plantImage = ResourceLoader.getBaseplantImage();
+        Image plantImage = ResourceLoader.getImage("BasePlantImage");
         shape = new ImageView(plantImage);
         shape.setFitWidth(60);  // Set the width and height
         shape.setFitHeight(60);

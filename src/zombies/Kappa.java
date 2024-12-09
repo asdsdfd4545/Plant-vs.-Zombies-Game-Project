@@ -20,7 +20,6 @@ public class Kappa {
     protected long animationSpeed = 300_000_000; // ความเร็วแอนิเมชัน (150ms ต่อเฟรม)
     private javafx.animation.Timeline attackTimeline;
 
-
     public Kappa(double x, double y) {
         this.x = x;
         this.y = y;
@@ -29,21 +28,21 @@ public class Kappa {
         
         animations = new HashMap<>();
         animations.put("walk", new Image[] {
-        	ResourceLoader.getKappa_walk1Image(),
-            ResourceLoader.getKappa_walk2Image()
+        	ResourceLoader.getImage("Kappa_Walk1Image"),
+            ResourceLoader.getImage("Kappa_Walk2Image")
         	});
         animations.put("hitted", new Image[] {
-        		ResourceLoader.getKappa_hit2Image(),
-        		ResourceLoader.getKappa_hit1Image()
+        		ResourceLoader.getImage("Kappa_Hit1Image"),
+        		ResourceLoader.getImage("Kappa_Hit2Image")
         	});
         animations.put("attack", new Image[] {
-                ResourceLoader.getKappa_attack1Image(),
-                ResourceLoader.getKappa_attack2Image(),
-                ResourceLoader.getKappa_attack3Image(),
-                ResourceLoader.getKappa_attack4Image()
+                ResourceLoader.getImage("Kappa_Attack1Image"),
+                ResourceLoader.getImage("Kappa_Attack2Image"),
+                ResourceLoader.getImage("Kappa_Attack3Image"),
+                ResourceLoader.getImage("Kappa_Attack4Image")
             });
         animations.put("dead", new Image[] {
-                ResourceLoader.getKappa_deadImage()
+                ResourceLoader.getImage("Kappa_DeadImage")
             });
 
         shape = new ImageView(animations.get("walk")[0]);
@@ -104,8 +103,6 @@ public class Kappa {
     public void setAttackTimeline(javafx.animation.Timeline timeline) {
         this.attackTimeline = timeline;
     }
-
-
     
     public void setState(String newState) {
         // เปลี่ยนสถานะแอนิเมชัน
@@ -117,7 +114,6 @@ public class Kappa {
     public boolean isAttacking() {
         return "attack".equals(currentState);
     }
-
 
     public void takeDamage() {
         health--;

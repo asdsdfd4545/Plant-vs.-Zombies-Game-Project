@@ -15,7 +15,7 @@ public class Bullet {
         this.damage = damage;
 
         // Assuming you have a bullet image
-        Image bulletImage = ResourceLoader.getBulletImage();
+        Image bulletImage = ResourceLoader.getImage("BulletImage");
         shape = new ImageView(bulletImage);
         shape.setFitWidth(10);  // Set the bullet width
         shape.setFitHeight(20); // Set the bullet height

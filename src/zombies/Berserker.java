@@ -15,21 +15,21 @@ public class Berserker extends Kappa{
 		
         animations = new HashMap<>();
         animations.put("walk", new Image[] {
-        	ResourceLoader.getBerserker_walk1Image(),
-            ResourceLoader.getBerserker_walk2Image()
+        	ResourceLoader.getImage("Berserker_Walk1Image"),
+            ResourceLoader.getImage("Berserker_Walk2Image")
         	});
         animations.put("hitted", new Image[] {
-        		ResourceLoader.getBerserker_hit2Image(),
-        		ResourceLoader.getBerserker_hit1Image()
+        		ResourceLoader.getImage("Berserker_Hit2Image"),
+        		ResourceLoader.getImage("Berserker_Hit1Image")
         	});
         animations.put("attack", new Image[] {
-                ResourceLoader.getBerserker_attack1Image(),
-                ResourceLoader.getBerserker_attack2Image(),
-                ResourceLoader.getBerserker_attack3Image(),
-                ResourceLoader.getBerserker_attack4Image()
+                ResourceLoader.getImage("Berserker_Attack1Image"),
+                ResourceLoader.getImage("Berserker_Attack2Image"),
+                ResourceLoader.getImage("Berserker_Attack3Image"),
+                ResourceLoader.getImage("Berserker_Attack4Image")
             });
         animations.put("dead", new Image[] {
-                ResourceLoader.getBerserker_deadImage()
+                ResourceLoader.getImage("Berserker_DeadImage")
             });
 
         shape = new ImageView(animations.get("walk")[0]);

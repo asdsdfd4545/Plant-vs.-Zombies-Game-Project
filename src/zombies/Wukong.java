@@ -15,21 +15,21 @@ public class Wukong extends Kappa{
 		
 		animations = new HashMap<>();
         animations.put("walk", new Image[] {
-        	ResourceLoader.getWukong_walk1Image(),
-            ResourceLoader.getWukong_walk2Image()
+        	ResourceLoader.getImage("Wukong_Walk1Image"),
+            ResourceLoader.getImage("Wukong_Walk2Image")
         	});
         animations.put("hitted", new Image[] {
-        		ResourceLoader.getWukong_hit2Image(),
-        		ResourceLoader.getWukong_hit1Image()
+        		ResourceLoader.getImage("Wukong_Hit2Image"),
+        		ResourceLoader.getImage("Wukong_Hit1Image")
         	});
         animations.put("attack", new Image[] {
-                ResourceLoader.getWukong_attack1Image(),
-                ResourceLoader.getWukong_attack2Image(),
-                ResourceLoader.getWukong_attack3Image(),
-                ResourceLoader.getWukong_attack4Image()
+                ResourceLoader.getImage("Wukong_Attack1Image"),
+                ResourceLoader.getImage("Wukong_Attack2Image"),
+                ResourceLoader.getImage("Wukong_Attack3Image"),
+                ResourceLoader.getImage("Wukong_Attack4Image")
             });
         animations.put("dead", new Image[] {
-                ResourceLoader.getWukong_deadImage()
+                ResourceLoader.getImage("Wukong_DeadImage")
             });
 
         shape = new ImageView(animations.get("walk")[0]);

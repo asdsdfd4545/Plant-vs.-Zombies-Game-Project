@@ -11,31 +11,22 @@ import zombies.Berserker;
 import zombies.Kappa;
 import zombies.Wukong;
 import javafx.animation.AnimationTimer;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class GameScreen {
     private Pane root;
@@ -83,13 +74,13 @@ public class GameScreen {
 
     private void initializeGameScreen() {
         // Background
-        Image backgroundImage = ResourceLoader.getBackgroundImage();
+        Image backgroundImage = ResourceLoader.getImage("BackGroundImage");
         ImageView background = new ImageView(backgroundImage);
         background.setFitWidth(800);
         background.setFitHeight(600);
         root.getChildren().add(background);
         
-        gameSound = ResourceLoader.getGameSound();
+        gameSound = ResourceLoader.getAudio("GameSound");
         gameSound.setCycleCount(AudioClip.INDEFINITE); // เล่นซ้ำเมื่อเสียงจบ
         if(!isGameSoundPlaying) gameSound.play();
         isGameSoundPlaying = true;
@@ -136,13 +127,9 @@ public class GameScreen {
         root.getChildren().add(startButton);
     }
 
-    private void updateMoneyDisplay() {
-        moneyLabel.setText("Money\n" + GameCurrency.getMoney());
-    }
-
     private void startAction() {
         Round++;
-        AudioClip buttonSound = ResourceLoader.getButtonSound();
+        AudioClip buttonSound = ResourceLoader.getAudio("ButtonSound");
         buttonSound.play();
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
         pause.setOnFinished(e -> {
@@ -183,7 +170,7 @@ public class GameScreen {
     
     private void startCountdownTimer() {
         gameResetInProgress = true; // Prevent multiple resets during countdown
-        nextwaveSound = ResourceLoader.getNextwaveSound();
+        nextwaveSound = ResourceLoader.getAudio("NextWaveSound");
 
         // Initialize AnimationTimer to update every frame (1/60 seconds)
         countdownTimer = new AnimationTimer() {
@@ -213,7 +200,6 @@ public class GameScreen {
         countdownTimer.start();
     }
     
-
     private void resetGame() {
         // Stop game actions
     	
@@ -249,6 +235,13 @@ public class GameScreen {
         updateMoneyDisplay(); // Reset money display
     }
     
+    private void selectAction(int rowIndex) {
+		// TODO Auto-generated method stub
+        	currentRowIndex = rowIndex;
+        	plantAction(rowIndex, "Empty");
+		
+	}
+    
     private Button createSelectRowButtons(String label, double layoutY, int rowIndex) {
         Button button = new Button(label);
         button.setId("select");
@@ -261,14 +254,6 @@ public class GameScreen {
         return button;
     	
     }
-    
-
-    private void selectAction(int rowIndex) {
-		// TODO Auto-generated method stub
-        	currentRowIndex = rowIndex;
-        	plantAction(rowIndex, "Empty");
-		
-	}
 
 	private void createPlantRowButtons(int rowIndex) {
         double yPosition = 45 + rowIndex * 110;  // Y position for each row's buttons
@@ -280,7 +265,7 @@ public class GameScreen {
         basePlantButton.setPrefHeight(65);
         basePlantButton.setLayoutX(9);
         basePlantButton.setLayoutY(yPosition);
-        Image image = ResourceLoader.getBaseplantImage();
+        Image image = ResourceLoader.getImage("BasePlantImage");
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(40); // ปรับความกว้างของรูปภาพ
         imageView.setFitHeight(40); // ปรับความสูงของรูปภาพ
@@ -298,7 +283,7 @@ public class GameScreen {
         superPlantButton.setPrefHeight(65);
         superPlantButton.setLayoutX(9);
         superPlantButton.setLayoutY(yPosition + 73);
-        Image image2 = ResourceLoader.getSuperplantImage();
+        Image image2 = ResourceLoader.getImage("SuperPlantImage");
         ImageView imageView2 = new ImageView(image2);
         imageView2.setFitWidth(45); // ปรับความกว้างของรูปภาพ
         imageView2.setFitHeight(45); // ปรับความสูงของรูปภาพ
@@ -316,7 +301,7 @@ public class GameScreen {
         trapPlantButton.setPrefHeight(65);
         trapPlantButton.setLayoutX(9);
         trapPlantButton.setLayoutY(yPosition + 144);
-        Image image3 = ResourceLoader.getTrapplantImage();
+        Image image3 = ResourceLoader.getImage("TrapPlantImage");
         ImageView imageView3 = new ImageView(image3);
         imageView3.setFitWidth(40); // ปรับความกว้างของรูปภาพ
         imageView3.setFitHeight(40); // ปรับความสูงของรูปภาพ
@@ -339,7 +324,7 @@ public class GameScreen {
     }
 
     private void plantAction(int rowIndex, String plantType) {
-    	AudioClip buttonSound = ResourceLoader.getButtonSound();
+    	AudioClip buttonSound = ResourceLoader.getAudio("ButtonSound");
         buttonSound.play();
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
         pause.setOnFinished(e -> {
@@ -464,10 +449,7 @@ public class GameScreen {
             zombies.add(zombie);
             break;
         }
-            
-//        Kappa zombie = new Kappa(spawnX, spawnY);
-//        zombies.add(zombie);
-      
+           
         ImageView zombieShape = zombie.getShape();
         zombieShape.setFitWidth(40);
         zombieShape.setFitHeight(60);
@@ -554,13 +536,11 @@ public class GameScreen {
                 }
             }
         }
-
     }
-
-
+    
     private void switchToGameOverScreen() {
         root.getChildren().clear();
-        AudioClip loseSound = ResourceLoader.getFailureSound();
+        AudioClip loseSound = ResourceLoader.getAudio("FailureSound");
         gameSound.stop();
         loseSound.play();
         gameAlreadyEnd = true;
@@ -647,7 +627,11 @@ public class GameScreen {
 
         gameLoop.start();
     }
-    
+
+    private void updateMoneyDisplay() {
+        moneyLabel.setText("Money\n" + GameCurrency.getMoney());
+    }
+
     private void stopGameLoop() {
         gamePaused = true; // Pause the game loop
     }

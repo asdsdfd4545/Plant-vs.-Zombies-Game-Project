@@ -37,10 +37,10 @@ public class Main extends Application {
         Pane homePageRoot = new Pane();
 
         // Set background image for homepage
-        Image homePageImage = ResourceLoader.getHomePageImage();
+        Image homePageImage = ResourceLoader.getImage("HomePageImage");
         ImageView homePageImageView = new ImageView(homePageImage);
-        AudioClip button = ResourceLoader.getButtonSound();
-        AudioClip homeSound = ResourceLoader.getHomepageSound();
+        AudioClip button = ResourceLoader.getAudio("ButtonSound");
+        AudioClip homeSound = ResourceLoader.getAudio("HomePageSound");
         homePageImageView.setFitWidth(800);
         homePageImageView.setFitHeight(600);
         homePageRoot.getChildren().add(homePageImageView);

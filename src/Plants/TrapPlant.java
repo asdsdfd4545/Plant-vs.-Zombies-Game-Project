@@ -13,7 +13,7 @@ public class TrapPlant extends Plant {
     public TrapPlant(double x, double y) {
         super(x, y, 8);
         this.plantCost = 20;
-        Image plantImage = ResourceLoader.getTrapplantImage();
+        Image plantImage = ResourceLoader.getImage("TrapPlantImage");
         shape = new ImageView(plantImage);
         shape.setFitWidth(60);  // Set the width and height
         shape.setFitHeight(60);

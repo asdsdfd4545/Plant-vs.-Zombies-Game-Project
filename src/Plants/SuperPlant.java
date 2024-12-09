@@ -14,7 +14,7 @@ public class SuperPlant extends Plant implements Shootable{
     public SuperPlant(double x, double y) {
         super(x, y, 6);
         this.plantCost = 100;
-        Image plantImage = ResourceLoader.getSuperplantImage();
+        Image plantImage = ResourceLoader.getImage("SuperPlantImage");
         shape = new ImageView(plantImage);
         shape.setFitWidth(60);  // Set the width and height
         shape.setFitHeight(60);

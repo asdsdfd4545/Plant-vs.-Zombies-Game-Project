@@ -3,7 +3,6 @@ package Plants;
 import java.util.List;
 
 import Logic.Bullet;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
