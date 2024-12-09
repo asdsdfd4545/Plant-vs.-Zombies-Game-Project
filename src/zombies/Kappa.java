@@ -23,8 +23,8 @@ public class Kappa {
     public Kappa(double x, double y) {
         this.x = x;
         this.y = y;
+        this.setHealth(7);
         this.setSpeed(1);
-        this.setHealth(3);
         
         animations = new HashMap<>();
         animations.put("walk", new Image[] {

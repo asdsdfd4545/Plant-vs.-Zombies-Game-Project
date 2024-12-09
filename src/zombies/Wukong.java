@@ -9,7 +9,7 @@ public class Wukong extends Kappa{
 
 	public Wukong(double x, double y) {
 		super(x, y);
-		this.setHealth(2);
+		this.setHealth(9);
 		this.setSpeed(2);
 		
 		animations = new HashMap<>();

@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 public class BasePlant extends Plant implements Shootable {
     
     public BasePlant(double x, double y) {
-        super(x, y, 3);
+        super(x, y, 4);
         this.plantCost = 50;
         Image plantImage = new Image(getClass().getResource("/res/baseplant.png").toExternalForm());
         shape = new ImageView(plantImage);

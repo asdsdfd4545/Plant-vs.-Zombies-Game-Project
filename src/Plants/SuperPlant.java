@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 public class SuperPlant extends Plant implements Shootable{
 
     public SuperPlant(double x, double y) {
-        super(x, y, 5);
+        super(x, y, 6);
         this.plantCost = 100;
         Image plantImage = new Image(getClass().getResource("/res/superplant.png").toExternalForm());
         shape = new ImageView(plantImage);

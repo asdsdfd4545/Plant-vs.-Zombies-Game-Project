@@ -11,16 +11,20 @@ import zombies.Kappa;
 import zombies.Wukong;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +41,7 @@ public class GameScreen {
     private Random random;
     private static final int NUM_ROWS = 5;
     private static final int NUM_COLUMNS = 9;
-    private static final int ZOMBIE_SPAWN_INTERVAL = 5000;
+    private static final int ZOMBIE_SPAWN_INTERVAL = 1250;
     private int[] plantColumns;
     private boolean gameStarted;
     private int currentRowIndex = -1;
@@ -45,11 +49,12 @@ public class GameScreen {
     private Rectangle currentHighlight;
     private double X,Y;
     private Label timerLabel; // Label to show the countdown timer
-    private int countdownTime = 60; // 1 minute countdown time
+    private int countdownTime = 3; // 1 minute countdown time
     private boolean gameResetInProgress = false; // Flag to prevent re-triggering reset before the countdown is done
     private AnimationTimer countdownTimer; // AnimationTimer to handle the countdown
     private boolean gamePaused = false;  // Flag to control if the game is paused after timer ends
     private int Round = 0;
+    private boolean gameAlreadyEnd = false;
 
     public GameScreen() {
         root = new Pane();
@@ -61,6 +66,7 @@ public class GameScreen {
         plantColumns = new int[NUM_ROWS];
         random = new Random();
         gameStarted = false;
+        gameAlreadyEnd = false;
         GameCurrency.setMoney();
         initializeGameScreen();
         updateMoneyDisplay();
@@ -75,12 +81,13 @@ public class GameScreen {
         root.getChildren().add(background);
         
         //Money Label
-        moneyLabel = new Label("Money : " + GameCurrency.getMoney());
-        moneyLabel.setFont(new Font("Arial", 13));
-        moneyLabel.setTextFill(Color.BLACK);
-        moneyLabel.setLayoutX(2);
-        moneyLabel.setLayoutY(20);
-        moneyLabel.setStyle("-fx-background-color: white; -fx-padding: 5;");
+        moneyLabel = new Label("Money\n" + GameCurrency.getMoney());
+        moneyLabel.setFont(new Font("Elephant", 20));
+        moneyLabel.setTextAlignment(TextAlignment.CENTER);
+        moneyLabel.setTextFill(Color.DARKGREEN);
+        moneyLabel.setLayoutX(5);
+        moneyLabel.setLayoutY(10);
+        moneyLabel.setStyle("-fx-border-color: green; -fx-border-width: 3px; -fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(moneyLabel);
 
         // Plant Buttons for each row (BasePlant, SuperPlant, TrapPlant)
@@ -88,35 +95,35 @@ public class GameScreen {
         createPlantRowButtons(1);
 
         //selectRows Button
-        Button btn1 = createSelectRowButtons("A", 410, 0);
-        Button btn2 = createSelectRowButtons("B", 440, 1);
-        Button btn3 = createSelectRowButtons("C", 470, 2);
-        Button btn4 = createSelectRowButtons("D", 500, 3);
-        Button btn5 = createSelectRowButtons("E", 530, 4);
+        Button btn1 = createSelectRowButtons("A", 425, 0);
+        Button btn2 = createSelectRowButtons("B", 455, 1);
+        Button btn3 = createSelectRowButtons("C", 485, 2);
+        Button btn4 = createSelectRowButtons("D", 515, 3);
+        Button btn5 = createSelectRowButtons("E", 545, 4);
 
         root.getChildren().addAll(btn1, btn2, btn3, btn4, btn5);
         
         // Timer Label - Display Countdown
-        timerLabel = new Label("Time: 01:00");
-        timerLabel.setFont(new Font("Arial", 16));
+        timerLabel = new Label("Time : 01:00");
+        timerLabel.setFont(new Font("Comic Sans MS", 14));
         timerLabel.setTextFill(Color.BLACK);
-        timerLabel.setLayoutX(700); // Position it on the top-right corner
-        timerLabel.setLayoutY(20);
-        timerLabel.setStyle("-fx-background-color: white; -fx-padding: 5;");
+        timerLabel.setLayoutX(701); // Position it on the top-right corner
+        timerLabel.setLayoutY(2);
+        timerLabel.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(timerLabel);
         
         // Start Button
         Button startButton = new Button("Start");
         startButton.setPrefHeight(30);
         startButton.setPrefWidth(75);
-        startButton.setLayoutX(10);
-        startButton.setLayoutY(60);
+        startButton.setLayoutX(9);
+        startButton.setLayoutY(98);
         startButton.setOnAction(event -> startAction());
         root.getChildren().add(startButton);
     }
 
     private void updateMoneyDisplay() {
-        moneyLabel.setText("Money : " + GameCurrency.getMoney());
+        moneyLabel.setText("Money\n" + GameCurrency.getMoney());
     }
 
     private void startAction() {
@@ -169,9 +176,11 @@ public class GameScreen {
                         countdownTime--;
                         int minutes = countdownTime / 60;
                         int seconds = countdownTime % 60;
-                        timerLabel.setText(String.format("Time: %02d:%02d", minutes, seconds));
+                        timerLabel.setText(String.format("Time : %02d:%02d", minutes, seconds));
                     } else {
-                        resetGame();
+                        if(!gameAlreadyEnd) {
+                        	resetGame();
+                        }
                     }
                     lastUpdate = now;
                 }
@@ -206,13 +215,13 @@ public class GameScreen {
         // Reset the game screen
         root.getChildren().clear();
         
-        if (Round >= 3) {
+        if (Round >= 3 && !gameAlreadyEnd) {
     		switchToYouWinScreen();
     		return;
     	}
         
         initializeGameScreen(); // Reinitialize the game screen
-        countdownTime = 60; // Reset the countdown timer
+        countdownTime = 3; // Reset the countdown timer
         gameStarted = false; // Mark game as not started
         gameResetInProgress = false; // Allow next game start
         updateMoneyDisplay(); // Reset money display
@@ -223,7 +232,7 @@ public class GameScreen {
         button.setId("select");
         button.setPrefWidth(75);
         button.setPrefHeight(20);
-        button.setLayoutX(10);
+        button.setLayoutX(9);
         button.setLayoutY(layoutY);
         button.setOnAction(event -> selectAction(rowIndex));
         button.setVisible(true);
@@ -240,14 +249,14 @@ public class GameScreen {
 	}
 
 	private void createPlantRowButtons(int rowIndex) {
-        double yPosition = rowIndex * 110;  // Y position for each row's buttons
+        double yPosition = 45 + rowIndex * 110;  // Y position for each row's buttons
 
         // Create Button for BasePlant
         Button basePlantButton = new Button("50");
         basePlantButton.setId("Plant");
         basePlantButton.setPrefWidth(75);
         basePlantButton.setPrefHeight(65);
-        basePlantButton.setLayoutX(10);
+        basePlantButton.setLayoutX(9);
         basePlantButton.setLayoutY(yPosition);
         Image image = new Image("/res/baseplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
         ImageView imageView = new ImageView(image);
@@ -265,8 +274,8 @@ public class GameScreen {
         superPlantButton.setId("Plant");
         superPlantButton.setPrefWidth(75);
         superPlantButton.setPrefHeight(65);
-        superPlantButton.setLayoutX(10);
-        superPlantButton.setLayoutY(yPosition + 75);
+        superPlantButton.setLayoutX(9);
+        superPlantButton.setLayoutY(yPosition + 73);
         Image image2 = new Image("/res/superplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
         ImageView imageView2 = new ImageView(image2);
         imageView2.setFitWidth(45); // ปรับความกว้างของรูปภาพ
@@ -283,8 +292,8 @@ public class GameScreen {
         trapPlantButton.setId("Plant");
         trapPlantButton.setPrefWidth(75);
         trapPlantButton.setPrefHeight(65);
-        trapPlantButton.setLayoutX(10);
-        trapPlantButton.setLayoutY(yPosition + 150);
+        trapPlantButton.setLayoutX(9);
+        trapPlantButton.setLayoutY(yPosition + 144);
         Image image3 = new Image("/res/trapplant.png"); // ใส่ที่อยู่ไฟล์ภาพของคุณ
         ImageView imageView3 = new ImageView(image3);
         imageView3.setFitWidth(40); // ปรับความกว้างของรูปภาพ
@@ -301,7 +310,7 @@ public class GameScreen {
         emptyPlantButton.setPrefWidth(75);
         emptyPlantButton.setPrefHeight(15);
         emptyPlantButton.setLayoutX(10);
-        emptyPlantButton.setLayoutY(yPosition + 230);
+        emptyPlantButton.setLayoutY(yPosition + 217);
         emptyPlantButton.setOnAction(event -> plantAction(currentRowIndex, "Empty"));
         root.getChildren().add(emptyPlantButton);
         
@@ -523,12 +532,14 @@ public class GameScreen {
 
     private void switchToGameOverScreen() {
         root.getChildren().clear();
+        
+        gameAlreadyEnd = true;
 
         Label gameOverLabel = new Label("Game Over");
-        gameOverLabel.setFont(new Font("Arial", 60));
+        gameOverLabel.setFont(new Font("Comic Sans MS", 120));
         gameOverLabel.setTextFill(Color.RED);
-        gameOverLabel.setLayoutX(275);
-        gameOverLabel.setLayoutY(240);
+        gameOverLabel.setLayoutX(90);
+        gameOverLabel.setLayoutY(185);
 
         root.setStyle("-fx-background-color: black;");
         root.getChildren().add(gameOverLabel);
@@ -536,12 +547,14 @@ public class GameScreen {
     
     private void switchToYouWinScreen() {
         root.getChildren().clear();
+        
+        gameAlreadyEnd = true;
 
         Label youWinLabel = new Label("You Win");
-        youWinLabel.setFont(new Font("Arial", 60));
+        youWinLabel.setFont(new Font("Comic Sans MS", 120));
         youWinLabel.setTextFill(Color.GREEN);
-        youWinLabel.setLayoutX(275);
-        youWinLabel.setLayoutY(240);
+        youWinLabel.setLayoutX(160);
+        youWinLabel.setLayoutY(185);
 
         root.setStyle("-fx-background-color: black;");
         root.getChildren().add(youWinLabel);
@@ -578,7 +591,7 @@ public class GameScreen {
                     zombie.update();
 
                     // Check if zombie reaches the left side of the screen
-                    if (zombie.getX() < 100) {
+                    if (zombie.getX() < 100 && !gameAlreadyEnd) {
                         switchToGameOverScreen();
                         stop();  // Stop the game loop
                         return;  // Exit the game loop

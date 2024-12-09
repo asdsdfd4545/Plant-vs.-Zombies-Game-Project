@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 public class TrapPlant extends Plant {
 
     public TrapPlant(double x, double y) {
-        super(x, y, 10);
+        super(x, y, 8);
         this.plantCost = 20;
         Image plantImage = new Image(getClass().getResource("/res/trapplant.png").toExternalForm());
         shape = new ImageView(plantImage);
