@@ -3,7 +3,7 @@ package zombies;
 import java.util.HashMap;
 import java.util.Map;
 
-import Logic.ZomieState;
+import Logic.ZombieState;
 import assets.ResourceLoader;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
@@ -14,8 +14,8 @@ public class Kappa {
     protected double speed;
     protected int health;
     protected ImageView shape;
-    protected ZomieState currentState = ZomieState.WALK;
-    protected Map<ZomieState, Image[]> animations; // เก็บแอนิเมชันทั้งหมด
+    protected ZombieState currentState = ZombieState.WALK;
+    protected Map<ZombieState, Image[]> animations; // เก็บแอนิเมชันทั้งหมด
 //    protected String currentState = "walk"; // สถานะแอนิเมชันปัจจุบัน
     protected int frameIndex = 0; // เฟรมปัจจุบัน
     protected long lastFrameTime = 0; // เวลาเฟรมสุดท้าย
@@ -29,25 +29,25 @@ public class Kappa {
         this.setSpeed(1);
         
         animations = new HashMap<>();
-        animations.put(ZomieState.WALK, new Image[] {
+        animations.put(ZombieState.WALK, new Image[] {
         	ResourceLoader.getImage("Kappa_Walk1Image"),
             ResourceLoader.getImage("Kappa_Walk2Image")
         	});
-        animations.put(ZomieState.HITTED, new Image[] {
+        animations.put(ZombieState.HITTED, new Image[] {
         		ResourceLoader.getImage("Kappa_Hit1Image"),
         		ResourceLoader.getImage("Kappa_Hit2Image")
         	});
-        animations.put(ZomieState.ATTACK, new Image[] {
+        animations.put(ZombieState.ATTACK, new Image[] {
                 ResourceLoader.getImage("Kappa_Attack1Image"),
                 ResourceLoader.getImage("Kappa_Attack2Image"),
                 ResourceLoader.getImage("Kappa_Attack3Image"),
                 ResourceLoader.getImage("Kappa_Attack4Image")
             });
-        animations.put(ZomieState.DEAD, new Image[] {
+        animations.put(ZombieState.DEAD, new Image[] {
                 ResourceLoader.getImage("Kappa_DeadImage")
             });
 
-        shape = new ImageView(animations.get(ZomieState.WALK)[0]);
+        shape = new ImageView(animations.get(ZombieState.WALK)[0]);
         shape.setFitWidth(50);
         shape.setFitHeight(60);
         shape.setX(x);
@@ -69,7 +69,7 @@ public class Kappa {
                     lastFrameTime = now;
 
                     // ถ้าสถานะคือ dead และถึงเฟรมสุดท้ายแล้วหยุดแอนิเมชัน
-                    if (currentState.equals(ZomieState.DEAD) && frameIndex == currentFrames.length - 1) {
+                    if (currentState.equals(ZombieState.DEAD) && frameIndex == currentFrames.length - 1) {
                         stop(); // หยุด AnimationTimer
                     }
                 }
@@ -80,13 +80,13 @@ public class Kappa {
 
     public void update() {
         // ถ้า Kappa ยังไม่ตายให้เดิน
-        if (!currentState.equals(ZomieState.DEAD)&&!isAttacking()) {
+        if (!currentState.equals(ZombieState.DEAD)&&!isAttacking()) {
             if (health < 3) { // ตัวอย่าง: Kappa โดนโจมตีแล้ว
-                setState(ZomieState.HITTED);
+                setState(ZombieState.HITTED);
             } 
     
             else {
-                setState(ZomieState.WALK);
+                setState(ZombieState.WALK);
             }
             x -= speed;
             shape.setX(x);
@@ -99,14 +99,14 @@ public class Kappa {
 
     }
     public void startMovement() {
-        setState(ZomieState.WALK); // ถ้าไม่โจมตี เปลี่ยนสถานะเป็นเดิน
+        setState(ZombieState.WALK); // ถ้าไม่โจมตี เปลี่ยนสถานะเป็นเดิน
         this.setSpeed(1);
     }
     public void setAttackTimeline(javafx.animation.Timeline timeline) {
         this.attackTimeline = timeline;
     }
     
-    public void setState(ZomieState state) {
+    public void setState(ZombieState state) {
         // เปลี่ยนสถานะแอนิเมชัน
         if (!currentState.equals(state)) {
             currentState = state;
@@ -114,22 +114,22 @@ public class Kappa {
         }
     }
     public boolean isAttacking() {
-        return ZomieState.ATTACK.equals(currentState);
+        return ZombieState.ATTACK.equals(currentState);
     }
 
     public void takeDamage() {
         health--;
         if (health <= 0) {
-            setState(ZomieState.DEAD);
+            setState(ZombieState.DEAD);
         } else {
         	if(!isAttacking()) {
-        		setState(ZomieState.HITTED);
+        		setState(ZombieState.HITTED);
         	}
         }
     }
 
     public boolean isDead() {
-    	return currentState.equals(ZomieState.DEAD);
+    	return currentState.equals(ZombieState.DEAD);
     }
 
     public double getX() {

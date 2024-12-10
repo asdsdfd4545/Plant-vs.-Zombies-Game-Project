@@ -1,5 +1,5 @@
 package Logic;
 
-public enum ZomieState {
+public enum ZombieState {
 	WALK, ATTACK, HITTED, DEAD
 }
