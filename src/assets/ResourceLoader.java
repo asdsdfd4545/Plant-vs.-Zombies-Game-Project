@@ -11,7 +11,7 @@ public class ResourceLoader {
 
     // This method loads all resources at once
     public static void loadResources() {
-    	loadImage("HomePageImage", "Homepage.png");
+    	loadImage("HomePageImage", "HomePage.png");
     	loadImage("BackGroundImage", "background.png");
     	loadImage("Logo", "Logo.png");
     	
