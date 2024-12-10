@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceLoader {
-	private static final Map<String, Image> images = new HashMap<>();
-    private static final Map<String, AudioClip> audioClips = new HashMap<>();
+	private static final Map<String, Image> IMAGES = new HashMap<>();
+    private static final Map<String, AudioClip> AUDIO_CLIPS = new HashMap<>();
 
     // This method loads all resources at once
     public static void loadResources() {
@@ -59,19 +59,19 @@ public class ResourceLoader {
     }
     
     private static void loadImage(String key, String fileName) {
-        images.put(key, new Image(ClassLoader.getSystemResource(fileName).toExternalForm()));
+    	IMAGES.put(key, new Image(ClassLoader.getSystemResource(fileName).toExternalForm()));
     }
 
     private static void loadAudio(String key, String fileName) {
-        audioClips.put(key, new AudioClip(ClassLoader.getSystemResource(fileName).toExternalForm()));
+    	AUDIO_CLIPS.put(key, new AudioClip(ClassLoader.getSystemResource(fileName).toExternalForm()));
     }
 
     public static Image getImage(String key) {
-        return images.get(key);
+        return IMAGES.get(key);
     }
 
     public static AudioClip getAudio(String key) {
-        return audioClips.get(key);
+        return AUDIO_CLIPS.get(key);
     }
 }
 

@@ -7,6 +7,7 @@ import Plants.TrapPlant;
 import assets.ResourceLoader;
 import Logic.Bullet;
 import Logic.GameCurrency;
+import Logic.ZomieState;
 import zombies.Berserker;
 import zombies.Kappa;
 import zombies.Wukong;
@@ -432,7 +433,7 @@ public class GameScreen {
                     root.getChildren().remove(bullet.getShape());
                     bulletIterator.remove();
                     if (zombie.isDead()) {
-                        zombie.setState("dead");
+                        zombie.setState(ZomieState.DEAD);
                        
                         // ตั้งเวลาให้ลบ Zombie หลังจาก Animation เสร็จ
                         javafx.animation.Timeline removeZombieTimeline = new javafx.animation.Timeline(
@@ -459,7 +460,7 @@ public class GameScreen {
                 if (zombie.getShape().getBoundsInParent().intersects(plant.getShape().getBoundsInParent())) {
                     if (!zombie.isAttacking()&& zombie.getAttackTimeline() == null) {
                         // Zombie เริ่มโจมตี
-                        zombie.setState("attack");
+                        zombie.setState(ZomieState.ATTACK);
                         zombie.stopMovement();
 
                         // เริ่มโจมตีทุก 1 วินาที
@@ -473,12 +474,12 @@ public class GameScreen {
                                             root.getChildren().remove(plant.getShape());
                                             plants.remove(plant);
                                             zombie.startMovement();
-                                            zombie.setState("walk");
+                                            zombie.setState(ZomieState.WALK);
                                             zombie.setAttackTimeline(null);
                                             for (Kappa otherZombie : zombies) {
                                                 if (otherZombie.isAttacking()&&(zombie.getY()==otherZombie.getY())) {
                                                     otherZombie.startMovement();
-                                                    otherZombie.setState("walk");
+                                                    otherZombie.setState(ZomieState.WALK);
                                                     otherZombie.setAttackTimeline(null);
                                                 }
                                             }
