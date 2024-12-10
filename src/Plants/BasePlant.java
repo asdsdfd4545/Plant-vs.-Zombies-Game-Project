@@ -33,7 +33,7 @@ public class BasePlant extends Plant implements Shootable {
     
     public void shoot(List<Bullet> bullets,Pane root) {
         // Shoot a bullet from the plant's position
-        Bullet bullet = new Bullet(x + 40, y + 20, 5);  // Starts from the right of the plant
+        Bullet bullet = new Bullet(x + 40, y + 20);  // Starts from the right of the plant
         bullets.add(bullet);
         root.getChildren().add(bullet.getShape());
     }

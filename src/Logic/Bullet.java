@@ -6,13 +6,11 @@ import javafx.scene.image.ImageView;
 
 public class Bullet {
     private double x, y;
-    private int damage;
     private ImageView shape;
 
-    public Bullet(double x, double y, int damage) {
+    public Bullet(double x, double y) {
         this.x = x;
         this.y = y;
-        this.damage = damage;
 
         // Assuming you have a bullet image
         Image bulletImage = ResourceLoader.getImage("BulletImage");
