@@ -29,33 +29,33 @@ import java.util.List;
 import java.util.Random;
 
 public class GameScreen {
-    private Pane root;
-    private Label moneyLabel;
+    private Pane root; //root pane ของเกม
+    private Label moneyLabel; //โชว์เงินในเกม
     private List<Bullet> bullets;
     private List<Kappa> zombies;
     private List<Plant> plants;
-    private boolean[][] plantGrid = new boolean[NUM_ROWS][NUM_COLUMNS];
-    private Random random;
-    private static final int NUM_ROWS = 5;
-    private static final int NUM_COLUMNS = 9;
-    private static final int ZOMBIE_SPAWN_INTERVAL = 1250;
-    private int[] plantColumns;
-    private boolean gameStarted;
-    private int currentRowIndex = -1;
-    private int LastButtonPush = -1;
-    private Rectangle currentHighlight;
-    private double X,Y;
-    private Label timerLabel; // Label to show the countdown timer
-    private Label roundLabel;
-    private int countdownTime = 60; // 1 minute countdown time
-    private boolean gameResetInProgress = false; // Flag to prevent re-triggering reset before the countdown is done
-    private AnimationTimer countdownTimer; // AnimationTimer to handle the countdown
-    private boolean gamePaused = false;  // Flag to control if the game is paused after timer ends
-    private int Round = 0;
-    private boolean gameAlreadyEnd = false;
-    private boolean isGameSoundPlaying = false;
-    private AudioClip gameSound;
-    private AudioClip nextwaveSound;
+    private Random random; //เอาไว้สุ่มเลข
+    private static final int NUM_ROWS = 5; //จำนวนแถว
+    private static final int NUM_COLUMNS = 9; //จำนวน column
+    private static final int ZOMBIE_SPAWN_INTERVAL = 1250; //เอาไว้กำหนดความถี่ในการเกิดของซอมบี้
+    private boolean[][] plantGrid = new boolean[NUM_ROWS][NUM_COLUMNS]; //เอาไว้เช็คว่ามีต้นไม้ในช่องนั้นๆหรือยัง
+    private int[] plantColumns; //มีขนาดเท่ากับจำนวนแถว และในแต่ละตัวคือ เอาไว้เก็บ column ปัจจุบันที่อยู่ของแต่ละแถว
+    private int currentRowIndex = -1; // เอาไว้บอกว่าตอนนี้ Hilight อยู่ที่แถวอะไรในตอนนี้
+    private int LastButtonPush = -1; // เอาไว้บอกว่าก่อนหน้านี้ Hilight อยู่แถวอะไร
+    private Rectangle currentHighlight; // เอาไว้เก็บ Hilight ปัจจุบันเพื่อเอาไว้ลบ
+    private double X,Y; // ตำแหน่ง X,Y
+    private Label timerLabel; // Label เอาไว้จับเวลา
+    private Label roundLabel; // Label เอาไว้โชว์ว่าอยู่ Round ไหนแลว
+    private int countdownTime = 60; // กำหนดเวลาที่จะใช้ใน แต่ละ round
+    private boolean gameStarted; // เอาไว้บอกว่าเกมเริ่มรึยีง
+    private boolean gameResetInProgress = false; // เอาไว้ใช้บอกสถานะเพื่อกันรีเซ็ตก่อนที่จะนับถอยหลัง
+    private AnimationTimer countdownTimer; // AnimationTimer เอาไว้จับเวลา
+    private boolean gamePaused = false;  // เอาไว้เป็นสถานะเพื่อควบคุมว่าเกมหยุดชั่วคราว
+    private int Round = 0; // Round ปัจจุบัน
+    private boolean gameAlreadyEnd = false; //เอาไว้บอกว่าเกมจบหรือยัง
+    private boolean isGameSoundPlaying = false; // เอาไว้บอกว่าเสียงเกมมารึยัง
+    private AudioClip gameSound; //เสียงเอาไว้ใช้ในเกม
+    private AudioClip nextwaveSound; //เสียงเอาไว้ใช้เลื่อน round
     
     public GameScreen() {
         root = new Pane();
@@ -126,7 +126,7 @@ public class GameScreen {
         timerLabel = new Label("Time : 01:00");
         timerLabel.setFont(new Font("Comic Sans MS", 14));
         timerLabel.setTextFill(Color.BLACK);
-        timerLabel.setLayoutX(701); // Position it on the top-right corner
+        timerLabel.setLayoutX(701); 
         timerLabel.setLayoutY(2);
         timerLabel.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(timerLabel);
@@ -134,7 +134,7 @@ public class GameScreen {
         roundLabel = new Label("Round : "+(Round+1));
         roundLabel.setFont(new Font("Comic Sans MS", 14));
         roundLabel.setTextFill(Color.BLACK);
-        roundLabel.setLayoutX(621); // Position it on the top-right corner
+        roundLabel.setLayoutX(621); 
         roundLabel.setLayoutY(2);
         roundLabel.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-background-color: white; -fx-padding: 5;");
         root.getChildren().add(roundLabel);
@@ -153,13 +153,12 @@ public class GameScreen {
         Round++;
         AudioClip buttonSound = ResourceLoader.getAudio("ButtonSound");
         buttonSound.play();
-        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms ดีเลย์
+        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(200)); // 200ms
         pause.setOnFinished(e -> {
         	if (!gameStarted) {
         		startGame();
         	}
 
-        	// Start countdown timer if not already in progress
         	if (!gameResetInProgress) {
         		startCountdownTimer();
         	}
@@ -187,10 +186,9 @@ public class GameScreen {
     }
     
     private void startCountdownTimer() {
-        gameResetInProgress = true; // Prevent multiple resets during countdown
+        gameResetInProgress = true; // เอาไว้ป้องกันการจับเวลาที่ซับซ้อนกัน
         nextwaveSound = ResourceLoader.getAudio("NextWaveSound");
 
-        // Initialize AnimationTimer to update every frame (1/60 seconds)
         countdownTimer = new AnimationTimer() {
             private long lastUpdate = 0;
 
@@ -217,11 +215,10 @@ public class GameScreen {
     }
     
     private void resetGame() {
-    	gamePaused = true; 
+    	stopGameLoop(); 
         countdownTimer.stop(); 
-        stopGameLoop(); // Stop game loop (no zombies, bullets, etc.)
 
-        // Reset the plantGrid to default (all false)
+        // ปรับให้plantGrid เป็น false ให้หมดเพื่อเตรียมที่ให้วางต้นไม้สำหรับ round ถัดไป
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLUMNS; j++) {
                 plantGrid[i][j] = false;
@@ -234,7 +231,7 @@ public class GameScreen {
         bullets.clear();
         plants.clear();
         zombies.clear();
-     // Reset the game screen
+        
         root.getChildren().clear();
 
         if (Round >= 3 && !gameAlreadyEnd) {
@@ -242,18 +239,16 @@ public class GameScreen {
     		return;
     	}
         
-        initializeGameScreen(); // Reinitialize the game screen
-        countdownTime = 60; // Reset the countdown timer
-        gameStarted = false; // Mark game as not started
-        gameResetInProgress = false; // Allow next game start
-        updateMoneyDisplay(); // Reset money display
+        initializeGameScreen(); // Reinitialize หน้าจอเกมใหม่
+        countdownTime = 60; // รีเวลา
+        gameStarted = false; // ปักไว้ว่าเกมยังไม่เริ่ม
+        gameResetInProgress = false; // อนุญาตให้มีการสั่งจับเวลาได้แล้ว
+        updateMoneyDisplay(); // รีเซ็ตเงิน
     }
     
     private void selectAction(int rowIndex) {
-		// TODO Auto-generated method stub
         	currentRowIndex = rowIndex;
         	plantAction(rowIndex, "Empty");
-		
 	}
     
     private Button createSelectRowButtons(String label, double layoutY, int rowIndex) {
@@ -278,8 +273,8 @@ public class GameScreen {
         button.setLayoutY(yPosition);
         Image image = ResourceLoader.getImage(paraImage);
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(fitWidth); // ปรับความกว้างของรูปภาพ
-        imageView.setFitHeight(fitHeights); // ปรับความสูงของรูปภาพ
+        imageView.setFitWidth(fitWidth); 
+        imageView.setFitHeight(fitHeights); 
         imageView.setPreserveRatio(true); // เพื่อให้สัดส่วนของรูปภาพไม่ผิดเพี้ยน
         // ตั้งค่าให้แสดงรูปภาพในปุ่ม
         button.setGraphic(imageView);
@@ -394,9 +389,9 @@ public class GameScreen {
     private void spawnZombie() {
         int row = random.nextInt(NUM_ROWS);
         double spawnY = (row * (600 / NUM_ROWS)) + 30;
-        double spawnX = 800;  // Spawn from the right side of the screen
+        double spawnX = 800; 
 
-        Random random = new Random();
+//        Random random = new Random();
         int randomNumber = random.nextInt(Round);
         Kappa zombie = null;
         
@@ -536,9 +531,8 @@ public class GameScreen {
         root.getChildren().add(youWinLabel);
     }
 
- // Game loop should be stopped when the game is paused
     private void startGameLoop() {
-        if (gamePaused) return; // Don't start the game loop if the game is paused
+        if (gamePaused) return; // เอาไว้หยุดเกม loop / ไม่ให้เริ่มเกมถ้า gamepaused อยู่
 
         AnimationTimer gameLoop = new AnimationTimer() {
             private long lastZombieSpawnTime = 0;
@@ -555,10 +549,10 @@ public class GameScreen {
                 Iterator<Bullet> bulletIterator = bullets.iterator();
                 while (bulletIterator.hasNext()) {
                     Bullet bullet = bulletIterator.next();
-                    bullet.update();  // Move the bullet
-                    if (bullet.getX() > 800) {  // Check if the bullet is off-screen
-                        root.getChildren().remove(bullet.getShape());  // Remove bullet
-                        bulletIterator.remove();  // Remove from list
+                    bullet.update();  // อัพเดตกระสุน
+                    if (bullet.getX() > 800) {  // กระสุนออกนอกหน้าจอแล้ว
+                        root.getChildren().remove(bullet.getShape()); 
+                        bulletIterator.remove();  
                     }
                 }
 
@@ -566,7 +560,7 @@ public class GameScreen {
                 for (Kappa zombie : zombies) {
                     zombie.update();
 
-                    // Check if zombie reaches the left side of the screen
+                    // zombie วิ่งไปจนถึงบ้านแล้ว
                     if (zombie.getX() < 100 && !gameAlreadyEnd) {
                         switchToGameOverScreen();
                         stop();  // Stop the game loop
@@ -574,15 +568,14 @@ public class GameScreen {
                     }
                 }
 
-                // Update Plants and shoot bullets
+                // Update ให้ต้นไม้ยิงกระสุน
                 for (Plant plant : plants) {
-                    plant.update(bullets, root);  // Plants shoot bullets when updated
+                    plant.update(bullets, root); 
                 }
 
-                // Check collisions
                 checkCollisions();
 
-                // Spawn a new zombie at regular intervals (e.g., every 2 seconds)
+                // Spawn ซอมบี้ภายใน interval เวลาที่เรากำหนด
                 if (now - lastZombieSpawnTime > ZOMBIE_SPAWN_INTERVAL * 1000000L) {
                     spawnZombie();
                     lastZombieSpawnTime = now;
@@ -598,7 +591,7 @@ public class GameScreen {
     }
 
     private void stopGameLoop() {
-        gamePaused = true; // Pause the game loop
+        gamePaused = true; 
     }
 
     public Pane getRoot() {
