@@ -195,8 +195,7 @@ public class GameScreen {
 
             @Override
             public void handle(long now) {
-                // Check if one second has passed
-                if (now - lastUpdate >= 1_000_000_000) { // 1 second
+                if (now - lastUpdate >= 1_000_000_000) { // 1 sec
                     if (countdownTime > 0) {
                         countdownTime--;
                         int minutes = countdownTime / 60;
@@ -296,16 +295,16 @@ public class GameScreen {
         switch (plantType) {
          	case "Empty":
             	spendingcost = 0;
-            	break; // Prevent fall-through
+            	break; 
             case "BasePlant":
                 spendingcost = 50;
-                break; // Prevent fall-through
+                break; 
             case "SuperPlant":
                 spendingcost = 100;
-                break; // Prevent fall-through
+                break; 
             case "TrapPlant":
                  spendingcost = 20;
-                 break; // Prevent fall-through
+                 break; 
         }
         
         if (plantColumns[rowIndex] >= NUM_COLUMNS) plantColumns[rowIndex] = 0;
@@ -335,7 +334,6 @@ public class GameScreen {
         }
 
         if (plantColumns[rowIndex] < NUM_COLUMNS && GameCurrency.spend(spendingcost)) {
-            	// Create and add the appropriate plant type
             	if (currentHighlight != null) {
                     root.getChildren().remove(currentHighlight);
                 }  
